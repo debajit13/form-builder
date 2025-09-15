@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { SchemaManagerProvider } from './hooks/useSchemaManager';
+import { SubmissionManagerProvider } from './hooks/useSubmissionManager';
 import { SchemaList } from './components/SchemaList';
 import { FormBuilder } from './components/FormBuilder';
 import { FormViewer } from './components/FormViewer';
+import { DataDashboard } from './components/DataDashboard';
 import type { FormSchema } from './types/schema';
+// Import sample data to auto-populate in development
+import './utils/sampleData';
 
-type MainView = 'home' | 'builder' | 'viewer';
+type MainView = 'home' | 'builder' | 'viewer' | 'data';
 type BuilderView = 'list' | 'edit';
 
 function App() {
@@ -81,6 +85,16 @@ function App() {
               }`}
             >
               👀 Form Viewer
+            </button>
+            <button
+              onClick={() => setMainView('data')}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                mainView === 'data'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              📊 Data Dashboard
             </button>
           </div>
         </div>
@@ -184,32 +198,36 @@ function App() {
 
   return (
     <SchemaManagerProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
+      <SubmissionManagerProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Navigation />
 
-        {mainView === 'home' && <HomePage />}
+          {mainView === 'home' && <HomePage />}
 
-        {mainView === 'viewer' && <FormViewer />}
+          {mainView === 'viewer' && <FormViewer />}
 
-        {mainView === 'builder' && (
-          <>
-            {builderView === 'list' ? (
-              <div className="container mx-auto px-4 py-8">
-                <SchemaList
-                  onSelectSchema={handleSelectSchema}
-                  onCreateNew={handleCreateNew}
+          {mainView === 'data' && <DataDashboard />}
+
+          {mainView === 'builder' && (
+            <>
+              {builderView === 'list' ? (
+                <div className="container mx-auto px-4 py-8">
+                  <SchemaList
+                    onSelectSchema={handleSelectSchema}
+                    onCreateNew={handleCreateNew}
+                  />
+                </div>
+              ) : (
+                <FormBuilder
+                  schema={editingSchema || undefined}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
                 />
-              </div>
-            ) : (
-              <FormBuilder
-                schema={editingSchema || undefined}
-                onSave={handleSave}
-                onCancel={handleCancel}
-              />
-            )}
-          </>
-        )}
-      </div>
+              )}
+            </>
+          )}
+        </div>
+      </SubmissionManagerProvider>
     </SchemaManagerProvider>
   );
 }
