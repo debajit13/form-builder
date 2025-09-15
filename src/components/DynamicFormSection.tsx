@@ -5,9 +5,19 @@ interface DynamicFormSectionProps {
   section: FormSection;
   watchedValues: FormSubmissionData;
   theme?: FormTheme;
+  showValidation?: boolean;
+  showValidationRules?: boolean;
+  realTimeValidation?: boolean;
 }
 
-export function DynamicFormSection({ section, watchedValues, theme }: DynamicFormSectionProps) {
+export function DynamicFormSection({
+  section,
+  watchedValues,
+  theme,
+  showValidation = true,
+  showValidationRules = false,
+  realTimeValidation = true
+}: DynamicFormSectionProps) {
   // Evaluate conditional rules for section visibility
   const shouldShowSection = (conditional?: ConditionalRule): boolean => {
     if (!conditional) return true;
@@ -98,6 +108,9 @@ export function DynamicFormSection({ section, watchedValues, theme }: DynamicFor
             field={field}
             watchedValues={watchedValues}
             theme={theme}
+            showValidation={showValidation}
+            showValidationRules={showValidationRules}
+            realTimeValidation={realTimeValidation}
           />
         ))}
       </div>

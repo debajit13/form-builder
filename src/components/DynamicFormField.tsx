@@ -1,29 +1,56 @@
 import { useFormContext } from 'react-hook-form';
 import type { FieldSchema, FormTheme, SelectOption, FormSubmissionData } from '../types/schema';
+import { useRealTimeValidation } from '../hooks/useRealTimeValidation';
+import { ValidationDisplay, FieldValidationIndicator } from './ValidationDisplay';
 
 interface DynamicFormFieldProps {
   field: FieldSchema;
   watchedValues: FormSubmissionData;
   theme?: FormTheme;
+  showValidation?: boolean;
+  showValidationRules?: boolean;
+  realTimeValidation?: boolean;
 }
 
-export function DynamicFormField({ field, watchedValues, theme }: DynamicFormFieldProps) {
+export function DynamicFormField({
+  field,
+  watchedValues,
+  theme,
+  showValidation = true,
+  showValidationRules = false,
+  realTimeValidation = true
+}: DynamicFormFieldProps) {
   const {
     register,
-    formState: { errors },
-    setValue,
-    watch
+    formState: { errors }
   } = useFormContext();
 
-  const fieldError = errors[field.name];
-  const hasError = !!fieldError;
-  const fieldValue = watch(field.name);
+  const { validationState, handlers } = useRealTimeValidation({
+    field,
+    validateOnChange: realTimeValidation,
+    validateOnBlur: true,
+    debounceMs: 300,
+  });
 
-  // Base styling with theme support
+  const fieldError = errors[field.name];
+  const hasError = !!fieldError || !!validationState.error;
+
+  // Base styling with theme support and validation states
+  const getValidationClasses = () => {
+    if (hasError) {
+      return 'border-red-300 focus:ring-red-500 focus:border-red-500';
+    }
+    if (validationState.status === 'valid' && validationState.isTouched) {
+      return 'border-green-300 focus:ring-green-500 focus:border-green-500';
+    }
+    if (validationState.status === 'validating') {
+      return 'border-blue-300 focus:ring-blue-500 focus:border-blue-500';
+    }
+    return 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
+  };
+
   const baseClasses = `w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-    hasError
-      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+    getValidationClasses()
   } ${field.disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'} ${
     field.readonly ? 'bg-gray-50' : ''
   }`;
@@ -293,6 +320,7 @@ export function DynamicFormField({ field, watchedValues, theme }: DynamicFormFie
             disabled={field.disabled}
             readOnly={field.readonly}
             defaultValue={field.defaultValue}
+            onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
               fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'

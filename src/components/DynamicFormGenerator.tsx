@@ -19,6 +19,9 @@ interface DynamicFormGeneratorProps {
   allowDrafts?: boolean;
   submitButtonText?: string;
   resetButtonText?: string;
+  showValidation?: boolean;
+  showValidationRules?: boolean;
+  realTimeValidation?: boolean;
 }
 
 type FormStep = {
@@ -36,7 +39,10 @@ export function DynamicFormGenerator({
   showProgress,
   allowDrafts,
   submitButtonText,
-  resetButtonText
+  resetButtonText,
+  showValidation = true,
+  showValidationRules = false,
+  realTimeValidation = true
 }: DynamicFormGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [submissionResult, setSubmissionResult] = useState<{
@@ -310,6 +316,9 @@ export function DynamicFormGenerator({
                   section={currentSection}
                   watchedValues={watchedValues}
                   theme={schema.settings.theme}
+                  showValidation={showValidation}
+                  showValidationRules={showValidationRules}
+                  realTimeValidation={realTimeValidation}
                 />
               ) : (
                 // Single page: Show all sections
@@ -320,6 +329,9 @@ export function DynamicFormGenerator({
                       section={section}
                       watchedValues={watchedValues}
                       theme={schema.settings.theme}
+                      showValidation={showValidation}
+                      showValidationRules={showValidationRules}
+                      realTimeValidation={realTimeValidation}
                     />
                   ))}
                 </div>
