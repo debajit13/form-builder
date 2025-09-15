@@ -23,7 +23,7 @@ function App() {
     setBuilderView('edit');
   };
 
-  const handleSave = (schema: FormSchema) => {
+  const handleSave = () => {
     setEditingSchema(null);
     setBuilderView('list');
   };
@@ -202,7 +202,7 @@ function App() {
               </div>
             ) : (
               <FormBuilder
-                schema={editingSchema}
+                schema={editingSchema || undefined}
                 onSave={handleSave}
                 onCancel={handleCancel}
               />

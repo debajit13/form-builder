@@ -8,7 +8,7 @@ import { SchemaPreview } from './SchemaPreview';
 
 interface FormBuilderProps {
   schema?: FormSchema;
-  onSave: (schema: FormSchema) => void;
+  onSave: () => void;
   onCancel: () => void;
 }
 
@@ -129,15 +129,13 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      let savedSchema: FormSchema;
-
       if (schema) {
-        savedSchema = await updateSchema(schema.id, currentSchema);
+        await updateSchema(schema.id, currentSchema);
       } else {
-        savedSchema = await createSchema(currentSchema);
+        await createSchema(currentSchema);
       }
 
-      onSave(savedSchema);
+      onSave();
     } catch (error) {
       console.error('Failed to save schema:', error);
       alert('Failed to save schema. Please try again.');
