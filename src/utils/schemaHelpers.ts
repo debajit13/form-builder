@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import {
+import type {
   FormSchema,
   FieldSchema,
   FormSection,
@@ -99,7 +99,7 @@ export class SectionBuilder {
       label,
       type: 'text',
       ...options
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -116,7 +116,7 @@ export class SectionBuilder {
       label,
       type: 'email',
       ...options
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -133,7 +133,7 @@ export class SectionBuilder {
       label,
       type: 'number',
       ...options
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -150,7 +150,7 @@ export class SectionBuilder {
       label,
       type: 'date',
       ...options
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -169,7 +169,7 @@ export class SectionBuilder {
       type: 'select',
       options,
       ...fieldOptions
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -187,7 +187,7 @@ export class SectionBuilder {
       type: 'textarea',
       multiline: true,
       ...options
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -206,7 +206,7 @@ export class SectionBuilder {
       type: 'checkbox',
       options,
       ...fieldOptions
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;
@@ -225,7 +225,7 @@ export class SectionBuilder {
       type: 'radio',
       options,
       ...fieldOptions
-    } as FieldSchema;
+    };
 
     this.section.fields.push(field);
     return this;

@@ -1,4 +1,4 @@
-import { FormData, FormSubmission } from '../types/form';
+import type { FormData, FormSubmission } from '../types/form';
 
 const FORMS_KEY = 'dynamic-forms';
 const SUBMISSIONS_KEY = 'form-submissions';

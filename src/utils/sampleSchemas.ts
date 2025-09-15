@@ -1,4 +1,4 @@
-import { FormSchema } from '../types/schema';
+import type { FormSchema } from '../types/schema';
 
 export const contactFormSchema: FormSchema = {
   id: 'contact-form',

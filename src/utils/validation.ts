@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import {
+import type {
   FieldSchema,
   FormSchema,
   ValidationError,
@@ -7,7 +7,7 @@ import {
   StringValidationRule,
   NumberValidationRule,
   DateValidationRule,
-  SelectValidationRule
+  SelectValidationRule,
 } from '../types/schema';
 
 export class SchemaValidator {
@@ -18,20 +18,30 @@ export class SchemaValidator {
       case 'text':
       case 'email':
       case 'textarea':
-        validator = this.createStringValidator(field.validation as StringValidationRule, field.type);
+        validator = this.createStringValidator(
+          field.validation as StringValidationRule,
+          field.type
+        );
         break;
 
       case 'number':
-        validator = this.createNumberValidator(field.validation as NumberValidationRule);
+        validator = this.createNumberValidator(
+          field.validation as NumberValidationRule
+        );
         break;
 
       case 'date':
-        validator = this.createDateValidator(field.validation as DateValidationRule);
+        validator = this.createDateValidator(
+          field.validation as DateValidationRule
+        );
         break;
 
       case 'select':
       case 'radio':
-        validator = this.createSelectValidator(field as any, field.validation as SelectValidationRule);
+        validator = this.createSelectValidator(
+          field as any,
+          field.validation as SelectValidationRule
+        );
         break;
 
       case 'checkbox':
@@ -47,17 +57,20 @@ export class SchemaValidator {
     // Apply required validation
     if (field.validation?.required) {
       if (field.type === 'checkbox' && !field.options) {
-        validator = z.boolean().refine(val => val === true, {
-          message: field.validation?.message || `${field.label} is required`
+        validator = z.boolean().refine((val) => val === true, {
+          message: field.validation?.message || `${field.label} is required`,
         });
       } else {
-        validator = validator.refine(val => {
-          if (val === null || val === undefined || val === '') return false;
-          if (Array.isArray(val) && val.length === 0) return false;
-          return true;
-        }, {
-          message: field.validation?.message || `${field.label} is required`
-        });
+        validator = validator.refine(
+          (val) => {
+            if (val === null || val === undefined || val === '') return false;
+            if (Array.isArray(val) && val.length === 0) return false;
+            return true;
+          },
+          {
+            message: field.validation?.message || `${field.label} is required`,
+          }
+        );
       }
     } else {
       validator = validator.optional();
@@ -66,91 +79,109 @@ export class SchemaValidator {
     return validator;
   }
 
-  private static createStringValidator(validation?: StringValidationRule, type?: string): z.ZodString {
+  private static createStringValidator(
+    validation?: StringValidationRule,
+    type?: string
+  ): z.ZodString {
     let validator = z.string();
 
     if (validation?.minLength !== undefined) {
       validator = validator.min(validation.minLength, {
-        message: validation.message || `Must be at least ${validation.minLength} characters`
+        message:
+          validation.message ||
+          `Must be at least ${validation.minLength} characters`,
       });
     }
 
     if (validation?.maxLength !== undefined) {
       validator = validator.max(validation.maxLength, {
-        message: validation.message || `Must be at most ${validation.maxLength} characters`
+        message:
+          validation.message ||
+          `Must be at most ${validation.maxLength} characters`,
       });
     }
 
     if (validation?.pattern) {
       validator = validator.regex(new RegExp(validation.pattern), {
-        message: validation.message || 'Invalid format'
+        message: validation.message || 'Invalid format',
       });
     }
 
     if (type === 'email' || validation?.format === 'email') {
       validator = validator.email({
-        message: validation.message || 'Invalid email format'
+        message: validation.message || 'Invalid email format',
       });
     }
 
     if (validation?.format === 'url') {
       validator = validator.url({
-        message: validation.message || 'Invalid URL format'
+        message: validation.message || 'Invalid URL format',
       });
     }
 
     return validator;
   }
 
-  private static createNumberValidator(validation?: NumberValidationRule): z.ZodNumber {
+  private static createNumberValidator(
+    validation?: NumberValidationRule
+  ): z.ZodNumber {
     let validator = z.number({
-      invalid_type_error: 'Must be a valid number'
+      invalid_type_error: 'Must be a valid number',
     });
 
     if (validation?.min !== undefined) {
       validator = validator.min(validation.min, {
-        message: validation.message || `Must be at least ${validation.min}`
+        message: validation.message || `Must be at least ${validation.min}`,
       });
     }
 
     if (validation?.max !== undefined) {
       validator = validator.max(validation.max, {
-        message: validation.message || `Must be at most ${validation.max}`
+        message: validation.message || `Must be at most ${validation.max}`,
       });
     }
 
     if (validation?.integer) {
       validator = validator.int({
-        message: validation.message || 'Must be a whole number'
+        message: validation.message || 'Must be a whole number',
       });
     }
 
     return validator;
   }
 
-  private static createDateValidator(validation?: DateValidationRule): z.ZodDate {
+  private static createDateValidator(
+    validation?: DateValidationRule
+  ): z.ZodDate {
     let validator = z.date({
-      invalid_type_error: 'Must be a valid date'
+      invalid_type_error: 'Must be a valid date',
     });
 
     if (validation?.minDate) {
       const minDate = new Date(validation.minDate);
       validator = validator.min(minDate, {
-        message: validation.message || `Date must be after ${minDate.toLocaleDateString()}`
+        message:
+          validation.message ||
+          `Date must be after ${minDate.toLocaleDateString()}`,
       });
     }
 
     if (validation?.maxDate) {
       const maxDate = new Date(validation.maxDate);
       validator = validator.max(maxDate, {
-        message: validation.message || `Date must be before ${maxDate.toLocaleDateString()}`
+        message:
+          validation.message ||
+          `Date must be before ${maxDate.toLocaleDateString()}`,
       });
     }
 
     return validator;
   }
 
-  private static createSelectValidator(field: any, validation?: SelectValidationRule): z.ZodType<any> {
+  private static createSelectValidator(
+    field: any,
+    validation?: SelectValidationRule
+  ): z.ZodType<any> {
     const validValues = field.options.map((opt: any) => opt.value);
 
     if (field.multiple) {
@@ -158,13 +189,17 @@ export class SchemaValidator {
 
       if (validation?.minItems !== undefined) {
         validator = validator.min(validation.minItems, {
-          message: validation.message || `Select at least ${validation.minItems} option(s)`
+          message:
+            validation.message ||
+            `Select at least ${validation.minItems} option(s)`,
         });
       }
 
       if (validation?.maxItems !== undefined) {
         validator = validator.max(validation.maxItems, {
-          message: validation.message || `Select at most ${validation.maxItems} option(s)`
+          message:
+            validation.message ||
+            `Select at most ${validation.maxItems} option(s)`,
         });
       }
 
@@ -174,7 +209,10 @@ export class SchemaValidator {
     return z.enum(validValues as [string, ...string[]]);
   }
 
-  static validateFormData(schema: FormSchema, data: FormSubmissionData): ValidationError[] {
+  static validateFormData(
+    schema: FormSchema,
+    data: FormSubmissionData
+  ): ValidationError[] {
     const errors: ValidationError[] = [];
 
     for (const section of schema.sections) {
@@ -183,7 +221,10 @@ export class SchemaValidator {
         if (field.hidden || field.disabled) continue;
 
         // Check conditional rules
-        if (field.conditional && !this.evaluateCondition(field.conditional, data)) {
+        if (
+          field.conditional &&
+          !this.evaluateCondition(field.conditional, data)
+        ) {
           continue;
         }
 
@@ -212,7 +253,7 @@ export class SchemaValidator {
               errors.push({
                 field: field.name,
                 message: issue.message,
-                type: this.mapZodErrorType(issue.code)
+                type: this.mapZodErrorType(issue.code),
               });
             }
           }
@@ -223,7 +264,10 @@ export class SchemaValidator {
     return errors;
   }
 
-  private static evaluateCondition(condition: any, data: FormSubmissionData): boolean {
+  private static evaluateCondition(
+    condition: any,
+    data: FormSubmissionData
+  ): boolean {
     const fieldValue = data[condition.field];
 
     let result = false;
@@ -255,16 +299,18 @@ export class SchemaValidator {
       );
 
       if (condition.logic === 'or') {
-        result = result || nestedResults.some(r => r);
+        result = result || nestedResults.some((r) => r);
       } else {
-        result = result && nestedResults.every(r => r);
+        result = result && nestedResults.every((r) => r);
       }
     }
 
     return result;
   }
 
-  private static mapZodErrorType(code: z.ZodIssueCode): ValidationError['type'] {
+  private static mapZodErrorType(
+    code: z.ZodIssueCode
+  ): ValidationError['type'] {
     switch (code) {
       case z.ZodIssueCode.invalid_type:
         return 'format';

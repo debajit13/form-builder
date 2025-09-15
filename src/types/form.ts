@@ -34,7 +34,7 @@ export interface FormSubmission {
 }
 
 // Re-export new schema types for convenience
-export {
+export type {
   FormSchema,
   FieldSchema,
   FormSection,
