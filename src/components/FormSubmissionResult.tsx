@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import type { FormSchema, FormSubmissionData } from '../types/schema';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface FormSubmissionResultProps {
   result: {
@@ -12,32 +14,47 @@ interface FormSubmissionResultProps {
 }
 
 export function FormSubmissionResult({ result, schema, onStartOver, className = '' }: FormSubmissionResultProps) {
-  const downloadAsJSON = () => {
-    if (!result.data) return;
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
 
-    const dataStr = JSON.stringify(result.data, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
+  const downloadAsJSON = async () => {
+    if (!result.data || isDownloading) return;
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${schema.title.replace(/\s+/g, '_').toLowerCase()}_submission.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    setIsDownloading(true);
+    try {
+      // Add a small delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const dataStr = JSON.stringify(result.data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${schema.title.replace(/\s+/g, '_').toLowerCase()}_submission.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const copyToClipboard = async () => {
-    if (!result.data) return;
+    if (!result.data || isCopying) return;
 
+    setIsCopying(true);
     try {
       await navigator.clipboard.writeText(JSON.stringify(result.data, null, 2));
-      // You could add a toast notification here
+      // Add a small delay to show loading state
+      await new Promise(resolve => setTimeout(resolve, 200));
       alert('Data copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy to clipboard:', err);
       alert('Failed to copy to clipboard');
+    } finally {
+      setIsCopying(false);
     }
   };
 

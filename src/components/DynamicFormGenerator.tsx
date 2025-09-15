@@ -362,9 +362,9 @@ export function DynamicFormGenerator({
                 </button>
               </div>
 
-              <div className="flex items-center space-x-4">
-                {/* Multi-step Navigation */}
-                {isMultiStep && (
+                <div className="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4">
+                  {/* Multi-step Navigation */}
+                  {isMultiStep && (
                   <>
                     {currentStep > 0 && (
                       <button
@@ -400,10 +400,10 @@ export function DynamicFormGenerator({
                       </button>
                     )}
                   </>
-                )}
+                  )}
 
-                {/* Single Page Submit */}
-                {!isMultiStep && (
+                  {/* Single Page Submit */}
+                  {!isMultiStep && (
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -414,8 +414,8 @@ export function DynamicFormGenerator({
                   >
                     {isSubmitting ? 'Submitting...' : (submitButtonText || schema.settings.submitButtonText || 'Submit')}
                   </button>
-                )}
-              </div>
+                  )}
+                </div>
             </div>
           </div>
         </form>

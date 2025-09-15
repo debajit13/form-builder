@@ -161,7 +161,7 @@ export class SchemaValidator {
 
     if (validation?.pattern) {
       validator = validator.regex(new RegExp(validation.pattern), {
-        message: validation?.message || 'Invalid format',
+        message: validation.message || 'Invalid format',
       });
     }
 
@@ -376,16 +376,16 @@ export class SchemaValidator {
   }
 
   private static mapZodErrorType(
-    code: string
+    code: z.ZodIssueCode
   ): ValidationError['type'] {
     switch (code) {
-      case 'invalid_type':
+      case z.ZodIssueCode.invalid_type:
         return 'format';
-      case 'too_small':
+      case z.ZodIssueCode.too_small:
         return 'min';
-      case 'too_big':
+      case z.ZodIssueCode.too_big:
         return 'max';
-      case 'invalid_format':
+      case z.ZodIssueCode.invalid_format:
         return 'pattern';
       default:
         return 'custom';

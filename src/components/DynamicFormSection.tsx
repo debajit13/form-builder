@@ -77,11 +77,12 @@ export function DynamicFormSection({
   }
 
   return (
-    <div className="space-y-6">
+    <section className="space-y-4 sm:space-y-6" aria-labelledby={`section-${section.id}`}>
       {/* Section Header */}
-      <div className="border-b border-gray-200 pb-4">
+      <div className="border-b border-gray-200 pb-3 sm:pb-4">
         <h2
-          className="text-lg font-semibold text-gray-900"
+          id={`section-${section.id}`}
+          className="text-base sm:text-lg font-semibold text-gray-900 leading-tight"
           style={{
             fontSize: theme?.fontSize === 'sm' ? '1rem' : theme?.fontSize === 'lg' ? '1.25rem' : '1.125rem'
           }}
@@ -89,7 +90,7 @@ export function DynamicFormSection({
           {section.title}
         </h2>
         {section.description && (
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
             {section.description}
           </p>
         )}
@@ -97,9 +98,9 @@ export function DynamicFormSection({
 
       {/* Section Fields */}
       <div
-        className={`grid gap-6 ${getGridColumns(visibleFields.length, theme)}`}
+        className={`grid gap-4 sm:gap-6 ${getGridColumns(visibleFields.length, theme)}`}
         style={{
-          gap: theme?.spacing === 'compact' ? '1rem' : theme?.spacing === 'relaxed' ? '2rem' : '1.5rem'
+          gap: theme?.spacing === 'compact' ? '0.75rem' : theme?.spacing === 'relaxed' ? '2rem' : '1.5rem'
         }}
       >
         {visibleFields.map((field) => (
@@ -114,7 +115,7 @@ export function DynamicFormSection({
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -170,9 +171,10 @@ function shouldShowField(field: FieldSchema, watchedValues: FormSubmissionData):
 function getGridColumns(fieldCount: number, theme?: FormTheme): string {
   // Consider responsive breakpoints and field density
   if (fieldCount === 1) return 'grid-cols-1';
-  if (fieldCount === 2) return 'grid-cols-1 md:grid-cols-2';
-  if (fieldCount <= 4) return 'grid-cols-1 md:grid-cols-2';
+  if (fieldCount === 2) return 'grid-cols-1 sm:grid-cols-2';
+  if (fieldCount === 3) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  if (fieldCount <= 6) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
 
-  // For many fields, use responsive grid
-  return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+  // For many fields, use responsive grid with better mobile handling
+  return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
 }
