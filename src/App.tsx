@@ -1,16 +1,55 @@
+import { useState } from 'react';
+import { SchemaManagerProvider } from './hooks/useSchemaManager';
+import { SchemaList } from './components/SchemaList';
+import { FormBuilder } from './components/FormBuilder';
+import type { FormSchema } from './types/schema';
+
+type View = 'list' | 'builder';
+
 function App() {
+  const [currentView, setCurrentView] = useState<View>('list');
+  const [editingSchema, setEditingSchema] = useState<FormSchema | null>(null);
+
+  const handleSelectSchema = (schema: FormSchema) => {
+    setEditingSchema(schema);
+    setCurrentView('builder');
+  };
+
+  const handleCreateNew = () => {
+    setEditingSchema(null);
+    setCurrentView('builder');
+  };
+
+  const handleSave = (schema: FormSchema) => {
+    setEditingSchema(null);
+    setCurrentView('list');
+  };
+
+  const handleCancel = () => {
+    setEditingSchema(null);
+    setCurrentView('list');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Dynamic Form Builder
-        </h1>
-        <div className="text-center">
-          <p className="text-gray-600">Welcome to your dynamic form builder application!</p>
-        </div>
+    <SchemaManagerProvider>
+      <div className="min-h-screen bg-gray-50">
+        {currentView === 'list' ? (
+          <div className="container mx-auto px-4 py-8">
+            <SchemaList
+              onSelectSchema={handleSelectSchema}
+              onCreateNew={handleCreateNew}
+            />
+          </div>
+        ) : (
+          <FormBuilder
+            schema={editingSchema}
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        )}
       </div>
-    </div>
-  )
+    </SchemaManagerProvider>
+  );
 }
 
 export default App
