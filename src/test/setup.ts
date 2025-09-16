@@ -19,7 +19,7 @@ Object.defineProperty(globalThis as any, 'localStorage', {
 // Mock window.matchMedia
 Object.defineProperty(globalThis as any, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
