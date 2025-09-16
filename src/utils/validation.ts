@@ -376,16 +376,16 @@ export class SchemaValidator {
   }
 
   private static mapZodErrorType(
-    code: z.ZodIssueCode
+    code: string
   ): ValidationError['type'] {
     switch (code) {
-      case z.ZodIssueCode.invalid_type:
+      case 'invalid_type':
         return 'format';
-      case z.ZodIssueCode.too_small:
+      case 'too_small':
         return 'min';
-      case z.ZodIssueCode.too_big:
+      case 'too_big':
         return 'max';
-      case z.ZodIssueCode.invalid_format:
+      case 'invalid_format':
         return 'pattern';
       default:
         return 'custom';

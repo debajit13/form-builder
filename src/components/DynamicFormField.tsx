@@ -89,7 +89,7 @@ interface DynamicFormFieldProps {
 
 export function DynamicFormField({
   field,
-  watchedValues,
+  watchedValues: _watchedValues,
   theme,
   showValidation = true,
   showValidationRules = false,

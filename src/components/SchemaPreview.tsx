@@ -321,10 +321,10 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
           return (
             <input
               type="text"
-              {...register(field.name)}
-              placeholder={field.placeholder}
-              disabled={field.disabled}
-              readOnly={field.readonly}
+              {...register((field as any).name)}
+              placeholder={(field as any).placeholder}
+              disabled={(field as any).disabled}
+              readOnly={(field as any).readonly}
               className={baseClasses}
             />
           );
