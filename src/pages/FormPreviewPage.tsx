@@ -75,12 +75,16 @@ export function FormPreviewPage() {
         id: uuidv4(),
         formId: schema!.id,
         data,
-        submittedAt: new Date().toISOString(),
+        metadata: {
+          submittedAt: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          duration: 0
+        },
         status: 'complete' as const,
         validationErrors: []
       }
 
-      storage.saveSubmission(submission)
+      storage.saveSubmission(submission as any)
 
       setSubmissionResult({
         success: true,

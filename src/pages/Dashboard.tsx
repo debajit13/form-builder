@@ -32,7 +32,7 @@ export function Dashboard() {
           totalSubmissions: submissions.length,
           draftForms: forms.filter(form => form.metadata.status === 'draft').length,
           recentActivity: submissions.filter(sub => {
-            const submittedAt = new Date(sub.submittedAt)
+            const submittedAt = new Date((sub as any).submittedAt || (sub as any).metadata?.submittedAt)
             const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
             return submittedAt > weekAgo
           }).length
@@ -50,7 +50,7 @@ export function Dashboard() {
 
         setStats(dashboardStats)
         setRecentForms(sortedForms)
-        setRecentSubmissions(sortedSubmissions)
+        setRecentSubmissions(sortedSubmissions as any)
       } catch (error) {
         console.error('Error loading dashboard data:', error)
       } finally {
@@ -268,16 +268,16 @@ export function Dashboard() {
                   <div className="flex-1">
                     <h3 className="font-medium text-gray-900">Form Submission</h3>
                     <p className="text-sm text-gray-500">
-                      {new Date(submission.submittedAt).toLocaleDateString()}
+                      {new Date((submission as any).submittedAt || (submission as any).metadata?.submittedAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      submission.status === 'complete'
+                      (submission as any).status === 'complete'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {submission.status}
+                      {(submission as any).status}
                     </span>
                     <Link
                       to={`/data/submissions/${submission.id}`}

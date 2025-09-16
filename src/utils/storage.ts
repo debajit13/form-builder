@@ -198,7 +198,7 @@ class StorageManager {
 
   getSubmissionsByDateRange(formId: string, startDate: Date, endDate: Date): FormSubmission[] {
     return this.getSubmissions(formId).filter(submission => {
-      const submittedAt = new Date(submission.metadata.submittedAt);
+      const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
       return submittedAt >= startDate && submittedAt <= endDate;
     });
   }

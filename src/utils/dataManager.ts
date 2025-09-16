@@ -134,7 +134,7 @@ export class DataManager {
     }
 
     if (includeSubmissions) {
-      submissions = storage.getSubmissions();
+      submissions = storage.getSubmissions() as any;
 
       if (formIds) {
         submissions = submissions.filter(submission => formIds.includes(submission.formId));
@@ -142,7 +142,7 @@ export class DataManager {
 
       if (dateRange) {
         submissions = submissions.filter(submission => {
-          const submittedAt = new Date(submission.metadata.submittedAt);
+          const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
           return submittedAt >= dateRange.start && submittedAt <= dateRange.end;
         });
       }
@@ -210,7 +210,7 @@ export class DataManager {
           submission.id,
           submission.formId,
           submission.status,
-          submission.metadata.submittedAt,
+          (submission as any).metadata?.submittedAt || (submission as any).submittedAt,
           ...Array.from(allFieldNames).map(fieldName => {
             const value = submission.data[fieldName];
             return `"${String(value || '').replace(/"/g, '""')}"`;
@@ -283,7 +283,7 @@ export class DataManager {
 
         if (submissionsToImport.length > 0) {
           const allSubmissions = [...existingSubmissions, ...submissionsToImport];
-          storage.saveSubmissions(allSubmissions);
+          storage.saveSubmissions(allSubmissions as any);
           result.imported.submissions = submissionsToImport.length;
         }
       }
@@ -304,17 +304,17 @@ export class DataManager {
 
     const submissions = storage.getSubmissions();
     const oldSubmissions = submissions.filter(submission => {
-      const submittedAt = new Date(submission.metadata.submittedAt);
+      const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
       return submittedAt < cutoffDate;
     });
 
     if (oldSubmissions.length > 0) {
       const remainingSubmissions = submissions.filter(submission => {
-        const submittedAt = new Date(submission.metadata.submittedAt);
+        const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
         return submittedAt >= cutoffDate;
       });
 
-      storage.saveSubmissions(remainingSubmissions);
+      storage.saveSubmissions(remainingSubmissions as any);
     }
 
     return oldSubmissions.length;
@@ -375,7 +375,7 @@ export class DataManager {
       const dateStr = date.toISOString().split('T')[0];
 
       const count = submissions.filter(submission => {
-        const submissionDate = new Date(submission.metadata.submittedAt);
+        const submissionDate = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
         return submissionDate.toISOString().split('T')[0] === dateStr;
       }).length;
 
@@ -383,16 +383,16 @@ export class DataManager {
     }
 
     const oldestSubmission = submissions.reduce((oldest, current) => {
-      return new Date(current.metadata.submittedAt) < new Date(oldest.metadata.submittedAt) ? current : oldest;
+      return new Date((current as any).metadata?.submittedAt || (current as any).submittedAt) < new Date((oldest as any).metadata?.submittedAt || (oldest as any).submittedAt) ? current : oldest;
     });
 
-    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date(oldestSubmission.metadata.submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
+    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date((oldestSubmission as any).metadata?.submittedAt || (oldestSubmission as any).submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
 
     return {
       totalSubmissions: submissions.length,
-      submissionsToday: submissions.filter(s => new Date(s.metadata.submittedAt) >= today).length,
-      submissionsThisWeek: submissions.filter(s => new Date(s.metadata.submittedAt) >= weekAgo).length,
-      submissionsThisMonth: submissions.filter(s => new Date(s.metadata.submittedAt) >= monthAgo).length,
+      submissionsToday: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= today).length,
+      submissionsThisWeek: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= weekAgo).length,
+      submissionsThisMonth: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= monthAgo).length,
       averageSubmissionsPerDay: Math.round((submissions.length / daysSinceFirst) * 100) / 100,
       fieldPopularity,
       submissionTrends

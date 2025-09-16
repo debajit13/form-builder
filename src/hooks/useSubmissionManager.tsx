@@ -36,7 +36,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       setError(null);
 
       const loadedSubmissions = storage.getSubmissions();
-      setSubmissions(loadedSubmissions);
+      setSubmissions(loadedSubmissions as any);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load submissions';
       setError(errorMessage);
@@ -68,10 +68,10 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
         validationErrors: []
       };
 
-      storage.saveSubmission(submission);
+      storage.saveSubmission(submission as any);
 
       // Update local state
-      setSubmissions(prev => [...prev, submission]);
+      setSubmissions(prev => [...prev, submission as any]);
 
       return submission;
     } catch (err) {
@@ -109,7 +109,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       if (formId) {
         // Clear submissions for specific form
         const remainingSubmissions = submissions.filter(s => s.formId !== formId);
-        storage.saveSubmissions(remainingSubmissions);
+        storage.saveSubmissions(remainingSubmissions as any);
         setSubmissions(remainingSubmissions);
       } else {
         // Clear all submissions

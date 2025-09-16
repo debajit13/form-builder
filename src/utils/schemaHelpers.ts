@@ -12,7 +12,12 @@ export class SchemaBuilder {
   private schema: Partial<FormSchema> = {
     sections: [],
     settings: {},
-    metadata: {}
+    metadata: {
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      version: '1.0.0',
+      status: 'draft' as const
+    }
   };
 
   constructor(title: string, description?: string) {
@@ -86,22 +91,26 @@ export class SchemaBuilder {
 }
 
 export class SectionBuilder {
-  constructor(private section: FormSection) {}
+  private section: FormSection;
+
+  constructor(section: FormSection) {
+    this.section = section;
+  }
 
   addTextField(
     name: string,
     label: string,
     options: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'text',
       ...options
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -110,15 +119,15 @@ export class SectionBuilder {
     label: string,
     options: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'email',
       ...options
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -127,15 +136,15 @@ export class SectionBuilder {
     label: string,
     options: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'number',
       ...options
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -144,15 +153,15 @@ export class SectionBuilder {
     label: string,
     options: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'date',
       ...options
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -162,16 +171,16 @@ export class SectionBuilder {
     options: SelectOption[],
     fieldOptions: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'select',
       options,
       ...fieldOptions
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -180,16 +189,16 @@ export class SectionBuilder {
     label: string,
     options: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'textarea',
       multiline: true,
       ...options
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -199,16 +208,16 @@ export class SectionBuilder {
     options: SelectOption[] | undefined = undefined,
     fieldOptions: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'checkbox',
       options,
       ...fieldOptions
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 
@@ -218,16 +227,16 @@ export class SectionBuilder {
     options: SelectOption[],
     fieldOptions: Partial<FieldSchema> = {}
   ): SectionBuilder {
-    const field: FieldSchema = {
+    const field = {
       id: uuidv4(),
       name,
       label,
       type: 'radio',
       options,
       ...fieldOptions
-    };
+    } as any;
 
-    this.section.fields.push(field);
+    this.section.fields.push(field as any);
     return this;
   }
 }

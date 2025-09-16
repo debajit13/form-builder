@@ -16,7 +16,7 @@ interface ValidationEditorProps {
 export function ValidationEditor({ field, onChange }: ValidationEditorProps) {
   const [showValidation, setShowValidation] = useState(false);
 
-  const updateValidation = (updates: Partial<BaseValidationRule>) => {
+  const updateValidation = (updates: any) => {
     const currentValidation = field.validation || {};
     onChange({
       validation: {

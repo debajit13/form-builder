@@ -113,7 +113,7 @@ export function DynamicFormGenerator({
         validationErrors: []
       };
 
-      storage.saveSubmission(submission);
+      storage.saveSubmission(submission as any);
 
       // Call custom onSubmit handler
       if (onSubmit) {

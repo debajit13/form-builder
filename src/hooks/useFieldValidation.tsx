@@ -209,27 +209,27 @@ function evaluateConditional(conditional: any, formData: Record<string, any>): b
 }
 
 // Helper function to get default error messages
-function getDefaultErrorMessage(field: FieldSchema, errorCode: z.ZodIssueCode): string {
+function getDefaultErrorMessage(field: FieldSchema, errorCode: string): string {
   const fieldLabel = field.label || field.name;
 
   switch (errorCode) {
-    case z.ZodIssueCode.too_small:
+    case 'too_small':
       if (field.type === 'text' || field.type === 'textarea') {
-        return `${fieldLabel} must be at least ${field.validation?.minLength} characters`;
+        return `${fieldLabel} must be at least ${(field.validation as any)?.minLength} characters`;
       } else if (field.type === 'number') {
-        return `${fieldLabel} must be at least ${field.validation?.min}`;
+        return `${fieldLabel} must be at least ${(field.validation as any)?.min}`;
       }
       return `${fieldLabel} is too small`;
 
-    case z.ZodIssueCode.too_big:
+    case 'too_big':
       if (field.type === 'text' || field.type === 'textarea') {
-        return `${fieldLabel} must be at most ${field.validation?.maxLength} characters`;
+        return `${fieldLabel} must be at most ${(field.validation as any)?.maxLength} characters`;
       } else if (field.type === 'number') {
-        return `${fieldLabel} must be at most ${field.validation?.max}`;
+        return `${fieldLabel} must be at most ${(field.validation as any)?.max}`;
       }
       return `${fieldLabel} is too large`;
 
-    case z.ZodIssueCode.invalid_string:
+    case 'invalid_string':
       if (field.type === 'email') {
         return `Please enter a valid email address`;
       }
