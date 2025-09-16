@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useSchemaManager } from '../hooks/useSchemaManager';
+import { toast } from 'react-toastify';
 import type { FormSchema, FormSection, FieldSchema } from '../types/schema';
 import { SchemaBuilder } from '../utils/schemaHelpers';
+import { storage } from '../utils/storage';
 import { FieldEditor } from './FieldEditor';
 import { SectionEditor } from './SectionEditor';
 import { SchemaPreview } from './SchemaPreview';
@@ -13,7 +14,6 @@ interface FormBuilderProps {
 }
 
 export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
-  const { updateSchema, createSchema } = useSchemaManager();
   const [currentSchema, setCurrentSchema] = useState<FormSchema>(() => {
     if (schema) {
       return schema;
@@ -91,7 +91,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
           ? {
               ...section,
               fields: section.fields.map(field =>
-                field.id === fieldId ? { ...field, ...updates } : field
+                field.id === fieldId ? { ...field, ...updates } as FieldSchema : field
               )
             }
           : section
@@ -137,20 +137,28 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   };
 
   const handleSave = async () => {
+    console.log('=== SAVE DEBUG ===');
+    console.log('schema (initial):', schema);
+    console.log('currentSchema:', currentSchema);
+    console.log('isSaving:', isSaving);
+
     setIsSaving(true);
     try {
-      if (schema) {
-        await updateSchema(schema.id, currentSchema);
-      } else {
-        await createSchema(currentSchema);
-      }
+      console.log('Saving schema using storage.saveSchema');
+      storage.saveSchema(currentSchema);
+      console.log('Schema saved successfully');
 
+      toast.success('Schema saved successfully!');
+
+      console.log('Calling onSave callback');
       onSave();
+      console.log('Save completed successfully');
     } catch (error) {
       console.error('Failed to save schema:', error);
-      alert('Failed to save schema. Please try again.');
+      toast.error('Failed to save schema. Please try again.');
     } finally {
       setIsSaving(false);
+      console.log('=== SAVE DEBUG END ===');
     }
   };
 
@@ -198,7 +206,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id as 'builder' | 'preview')}
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                       activeTab === tab.id
                         ? 'bg-white text-gray-900 shadow-sm'
@@ -212,7 +220,10 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
               </div>
 
               <button
-                onClick={handleSave}
+                onClick={() => {
+                  console.log('BUTTON CLICKED!');
+                  handleSave();
+                }}
                 disabled={isSaving}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -297,7 +308,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                       field={
                         currentSchema.sections
                           .find(s => s.id === editingField.sectionId)
-                          ?.fields.find(f => f.id === editingField.fieldId)!
+                          ?.fields.find(f => f.id === editingField.fieldId) as FieldSchema
                       }
                       onChange={(updates) =>
                         handleFieldChange(editingField.sectionId, editingField.fieldId, updates)

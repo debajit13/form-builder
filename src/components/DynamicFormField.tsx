@@ -1,7 +1,82 @@
 import { useFormContext } from 'react-hook-form';
-import type { FieldSchema, FormTheme, SelectOption, FormSubmissionData } from '../types/schema';
+import type {
+  FieldSchema,
+  FormTheme,
+  SelectOption,
+  FormSubmissionData,
+} from '../types/schema';
 import { useRealTimeValidation } from '../hooks/useRealTimeValidation';
 import { ValidationDisplay } from './ValidationDisplay';
+
+// Helper function to extract error message from React Hook Form errors
+function getErrorMessage(error: any): string {
+  if (!error) return 'Invalid value';
+
+  // React Hook Form error can be:
+  // 1. { message: string, type: string, ... }
+  // 2. { message: { message: string }, type: string, ... }
+  // 3. String directly
+
+  // Direct string
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  // Standard React Hook Form error with string message
+  if (error.message && typeof error.message === 'string') {
+    return error.message;
+  }
+
+  // Handle complex error objects where message is nested
+  if (error.message && typeof error.message === 'object') {
+    // React Hook Form + Zod can create nested message structures
+    if (error.message.message && typeof error.message.message === 'string') {
+      return error.message.message;
+    }
+
+    // Sometimes the message is in a different property
+    if (error.message.text && typeof error.message.text === 'string') {
+      return error.message.text;
+    }
+
+    // Zod error array structure
+    if (Array.isArray(error.message) && error.message.length > 0) {
+      const firstIssue = error.message[0];
+      if (firstIssue && typeof firstIssue.message === 'string') {
+        return firstIssue.message;
+      }
+    }
+  }
+
+  // Try alternative properties
+  if (error.text && typeof error.text === 'string') return error.text;
+  if (error.error && typeof error.error === 'string') return error.error;
+
+  // Generate message based on error type
+  if (error.type) {
+    switch (error.type) {
+      case 'required':
+        return 'This field is required';
+      case 'min':
+        return 'Value is too small';
+      case 'max':
+        return 'Value is too large';
+      case 'minLength':
+        return 'Text is too short';
+      case 'maxLength':
+        return 'Text is too long';
+      case 'pattern':
+        return 'Invalid format';
+      case 'email':
+        return 'Invalid email address';
+      default:
+        return `Invalid value (${error.type})`;
+    }
+  }
+
+  // Absolute fallback
+  return 'Invalid value';
+}
 
 interface DynamicFormFieldProps {
   field: FieldSchema;
@@ -18,11 +93,11 @@ export function DynamicFormField({
   theme,
   showValidation = true,
   showValidationRules = false,
-  realTimeValidation = true
+  realTimeValidation = true,
 }: DynamicFormFieldProps) {
   const {
     register,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext();
 
   const { validationState, handlers } = useRealTimeValidation({
@@ -49,11 +124,9 @@ export function DynamicFormField({
     return 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:border-gray-400';
   };
 
-  const baseClasses = `w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
-    getValidationClasses()
-  } ${field.disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white'} ${
-    field.readonly ? 'bg-gray-50 cursor-default' : ''
-  }`;
+  const baseClasses = `w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${getValidationClasses()} ${
+    field.disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white'
+  } ${field.readonly ? 'bg-gray-50 cursor-default' : ''}`;
 
   const getThemeClasses = () => {
     const borderRadius = theme?.borderRadius || 'md';
@@ -61,7 +134,7 @@ export function DynamicFormField({
       none: 'rounded-none',
       sm: 'rounded-sm',
       md: 'rounded-md',
-      lg: 'rounded-lg'
+      lg: 'rounded-lg',
     }[borderRadius];
 
     return radiusClass;
@@ -83,7 +156,12 @@ export function DynamicFormField({
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
-              fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+              fontSize:
+                theme?.fontSize === 'sm'
+                  ? '0.875rem'
+                  : theme?.fontSize === 'lg'
+                  ? '1.125rem'
+                  : '1rem',
             }}
             aria-describedby={`${field.name}-description ${field.name}-error`}
             aria-invalid={hasError}
@@ -93,18 +171,19 @@ export function DynamicFormField({
       case 'number':
         const numberField = field as any;
         return (
-          <div className="relative">
+          <div className='relative'>
             {numberField.prefix && (
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
+              <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none'>
                 {numberField.prefix}
               </span>
             )}
             <input
               id={field.name}
-              type="number"
+              type='number'
               {...register(field.name, {
                 valueAsNumber: true,
-                setValueAs: (value) => value === '' ? undefined : Number(value)
+                setValueAs: (value) =>
+                  value === '' ? undefined : Number(value),
               })}
               placeholder={field.placeholder}
               disabled={field.disabled}
@@ -120,11 +199,16 @@ export function DynamicFormField({
               aria-describedby={`${field.name}-description ${field.name}-error`}
               aria-invalid={hasError}
               style={{
-                fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+                fontSize:
+                  theme?.fontSize === 'sm'
+                    ? '0.875rem'
+                    : theme?.fontSize === 'lg'
+                    ? '1.125rem'
+                    : '1rem',
               }}
             />
             {numberField.suffix && (
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
+              <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none'>
                 {numberField.suffix}
               </span>
             )}
@@ -135,7 +219,7 @@ export function DynamicFormField({
         return (
           <input
             id={field.name}
-            type="date"
+            type='date'
             {...register(field.name)}
             disabled={field.disabled}
             readOnly={field.readonly}
@@ -145,7 +229,12 @@ export function DynamicFormField({
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
-              fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+              fontSize:
+                theme?.fontSize === 'sm'
+                  ? '0.875rem'
+                  : theme?.fontSize === 'lg'
+                  ? '1.125rem'
+                  : '1rem',
             }}
             aria-describedby={`${field.name}-description ${field.name}-error`}
             aria-invalid={hasError}
@@ -166,7 +255,12 @@ export function DynamicFormField({
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()} resize-vertical`}
             style={{
-              fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+              fontSize:
+                theme?.fontSize === 'sm'
+                  ? '0.875rem'
+                  : theme?.fontSize === 'lg'
+                  ? '1.125rem'
+                  : '1rem',
             }}
             aria-describedby={`${field.name}-description ${field.name}-error`}
             aria-invalid={hasError}
@@ -187,8 +281,13 @@ export function DynamicFormField({
               onBlur={handlers.onBlur}
               className={`${baseClasses} ${getThemeClasses()}`}
               style={{
-                fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem',
-                minHeight: '6rem'
+                fontSize:
+                  theme?.fontSize === 'sm'
+                    ? '0.875rem'
+                    : theme?.fontSize === 'lg'
+                    ? '1.125rem'
+                    : '1rem',
+                minHeight: '6rem',
               }}
               aria-describedby={`${field.name}-description ${field.name}-error`}
               aria-invalid={hasError}
@@ -215,12 +314,17 @@ export function DynamicFormField({
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
-              fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+              fontSize:
+                theme?.fontSize === 'sm'
+                  ? '0.875rem'
+                  : theme?.fontSize === 'lg'
+                  ? '1.125rem'
+                  : '1rem',
             }}
             aria-describedby={`${field.name}-description ${field.name}-error`}
             aria-invalid={hasError}
           >
-            <option value="">{field.placeholder || 'Select an option'}</option>
+            <option value=''>{field.placeholder || 'Select an option'}</option>
             {selectField.options?.map((option: SelectOption) => (
               <option
                 key={option.value}
@@ -236,7 +340,7 @@ export function DynamicFormField({
       case 'radio':
         const radioField = field as any;
         return (
-          <div className="space-y-3">
+          <div className='space-y-3'>
             {radioField.options?.map((option: SelectOption) => (
               <label
                 key={option.value}
@@ -245,20 +349,27 @@ export function DynamicFormField({
                 }`}
               >
                 <input
-                  type="radio"
+                  type='radio'
                   {...register(field.name)}
                   value={option.value}
                   disabled={field.disabled || option.disabled}
                   defaultChecked={field.defaultValue === option.value}
-                  className="text-blue-600 focus:ring-blue-500 h-4 w-4"
+                  className='text-blue-600 focus:ring-blue-500 h-4 w-4'
                   style={{
-                    accentColor: theme?.primaryColor || '#3b82f6'
+                    accentColor: theme?.primaryColor || '#3b82f6',
                   }}
                 />
                 <span
-                  className={`${option.disabled ? 'text-gray-400' : 'text-gray-700'}`}
+                  className={`${
+                    option.disabled ? 'text-gray-400' : 'text-gray-700'
+                  }`}
                   style={{
-                    fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+                    fontSize:
+                      theme?.fontSize === 'sm'
+                        ? '0.875rem'
+                        : theme?.fontSize === 'lg'
+                        ? '1.125rem'
+                        : '1rem',
                   }}
                 >
                   {option.label}
@@ -274,7 +385,7 @@ export function DynamicFormField({
         if (checkboxField.options) {
           // Multiple checkboxes
           return (
-            <div className="space-y-3">
+            <div className='space-y-3'>
               {checkboxField.options.map((option: SelectOption) => (
                 <label
                   key={option.value}
@@ -283,7 +394,7 @@ export function DynamicFormField({
                   }`}
                 >
                   <input
-                    type="checkbox"
+                    type='checkbox'
                     {...register(field.name)}
                     value={option.value}
                     disabled={field.disabled || option.disabled}
@@ -292,15 +403,22 @@ export function DynamicFormField({
                         ? field.defaultValue.includes(option.value)
                         : field.defaultValue === option.value
                     }
-                    className="text-blue-600 focus:ring-blue-500 h-4 w-4 rounded"
+                    className='text-blue-600 focus:ring-blue-500 h-4 w-4 rounded'
                     style={{
-                      accentColor: theme?.primaryColor || '#3b82f6'
+                      accentColor: theme?.primaryColor || '#3b82f6',
                     }}
                   />
                   <span
-                    className={`${option.disabled ? 'text-gray-400' : 'text-gray-700'}`}
+                    className={`${
+                      option.disabled ? 'text-gray-400' : 'text-gray-700'
+                    }`}
                     style={{
-                      fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+                      fontSize:
+                        theme?.fontSize === 'sm'
+                          ? '0.875rem'
+                          : theme?.fontSize === 'lg'
+                          ? '1.125rem'
+                          : '1rem',
                     }}
                   >
                     {option.label}
@@ -313,21 +431,26 @@ export function DynamicFormField({
 
         // Single checkbox
         return (
-          <label className="flex items-center space-x-3 cursor-pointer">
+          <label className='flex items-center space-x-3 cursor-pointer'>
             <input
-              type="checkbox"
+              type='checkbox'
               {...register(field.name)}
               disabled={field.disabled}
               defaultChecked={field.defaultValue}
-              className="text-blue-600 focus:ring-blue-500 h-4 w-4 rounded"
+              className='text-blue-600 focus:ring-blue-500 h-4 w-4 rounded'
               style={{
-                accentColor: theme?.primaryColor || '#3b82f6'
+                accentColor: theme?.primaryColor || '#3b82f6',
               }}
             />
             <span
-              className="text-gray-700"
+              className='text-gray-700'
               style={{
-                fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+                fontSize:
+                  theme?.fontSize === 'sm'
+                    ? '0.875rem'
+                    : theme?.fontSize === 'lg'
+                    ? '1.125rem'
+                    : '1rem',
               }}
             >
               {field.label}
@@ -340,7 +463,7 @@ export function DynamicFormField({
         return (
           <input
             id={defaultField.name}
-            type="text"
+            type='text'
             {...register(defaultField.name)}
             placeholder={defaultField.placeholder}
             disabled={defaultField.disabled}
@@ -349,7 +472,12 @@ export function DynamicFormField({
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
-              fontSize: theme?.fontSize === 'sm' ? '0.875rem' : theme?.fontSize === 'lg' ? '1.125rem' : '1rem'
+              fontSize:
+                theme?.fontSize === 'sm'
+                  ? '0.875rem'
+                  : theme?.fontSize === 'lg'
+                  ? '1.125rem'
+                  : '1rem',
             }}
             aria-describedby={`${defaultField.name}-description ${defaultField.name}-error`}
             aria-invalid={hasError}
@@ -360,9 +488,14 @@ export function DynamicFormField({
 
   return (
     <div
-      className="space-y-2"
+      className='space-y-2'
       style={{
-        marginBottom: theme?.spacing === 'compact' ? '0.75rem' : theme?.spacing === 'relaxed' ? '2rem' : '1.5rem'
+        marginBottom:
+          theme?.spacing === 'compact'
+            ? '0.75rem'
+            : theme?.spacing === 'relaxed'
+            ? '2rem'
+            : '1.5rem',
       }}
     >
       {/* Field Label */}
@@ -375,64 +508,146 @@ export function DynamicFormField({
         >
           {field.label}
           {field.validation?.required && (
-            <span className="text-red-500 ml-0.5">*</span>
+            <span className='text-red-500 ml-0.5'>*</span>
           )}
         </label>
       ) : null}
 
       {/* Field Description */}
       {field.description && (
-        <p className="text-xs text-gray-500 mt-1">{field.description}</p>
+        <p className='text-xs text-gray-500 mt-1'>{field.description}</p>
       )}
 
       {/* Field Input */}
-      <div className="relative">
+      <div className='relative'>
         {renderField()}
 
         {/* Field Unit (for number fields) */}
         {field.type === 'number' && (field as any).unit && (
-          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-sm">
+          <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-sm'>
             {(field as any).unit}
           </span>
         )}
       </div>
 
       {/* Validation feedback */}
-      <div className="min-h-[1.25rem]"> {/* Reserve space to prevent layout shift */}
+      <div className='min-h-[1.25rem]'>
+        {' '}
+        {/* Reserve space to prevent layout shift */}
         {showValidation && (
           <>
             {fieldError && (
-              <p id={`${field.name}-error`} className="text-red-600 text-sm flex items-center mt-1" role="alert">
-                <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <p
+                id={`${field.name}-error`}
+                className='text-red-600 text-sm flex items-center mt-1'
+                role='alert'
+              >
+                <svg
+                  className='w-4 h-4 mr-1 flex-shrink-0'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
+                    clipRule='evenodd'
+                  />
                 </svg>
-                {fieldError.message as string}
+{(() => {
+                  // Debug: Try different approaches to get the message
+                  if (!fieldError) return 'No error';
+
+                  console.log('ERROR DEBUG:', {
+                    fullError: fieldError,
+                    message: fieldError.message,
+                    type: fieldError.type,
+                    ref: fieldError.ref,
+                    keys: Object.keys(fieldError)
+                  });
+
+                  // Try multiple approaches
+                  let errorMessage = '';
+
+                  if (typeof fieldError === 'string') {
+                    errorMessage = fieldError;
+                  } else if (fieldError.message) {
+                    if (typeof fieldError.message === 'string') {
+                      errorMessage = fieldError.message;
+                    } else {
+                      errorMessage = JSON.stringify(fieldError.message);
+                    }
+                  } else if (fieldError.type) {
+                    errorMessage = `Validation error: ${fieldError.type}`;
+                  } else {
+                    errorMessage = 'Invalid value';
+                  }
+
+                  console.log('Final error message:', errorMessage);
+                  return errorMessage;
+                })()}
               </p>
             )}
 
             {validationState.error && !fieldError && (
-              <p id={`${field.name}-error`} className="text-red-600 text-sm flex items-center mt-1" role="alert">
-                <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <p
+                id={`${field.name}-error`}
+                className='text-red-600 text-sm flex items-center mt-1'
+                role='alert'
+              >
+                <svg
+                  className='w-4 h-4 mr-1 flex-shrink-0'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
+                    clipRule='evenodd'
+                  />
                 </svg>
                 {String(validationState.error)}
               </p>
             )}
 
-            {validationState.status === 'valid' && validationState.isTouched && !hasError && (
-              <p className="text-green-600 text-sm flex items-center mt-1">
-                <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Valid
-              </p>
-            )}
+            {validationState.status === 'valid' &&
+              validationState.isTouched &&
+              !hasError && (
+                <p className='text-green-600 text-sm flex items-center mt-1'>
+                  <svg
+                    className='w-4 h-4 mr-1 flex-shrink-0'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                  Valid
+                </p>
+              )}
 
             {validationState.status === 'validating' && (
-              <p className="text-blue-600 text-sm flex items-center mt-1">
-                <svg className="w-4 h-4 mr-1 flex-shrink-0 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <p className='text-blue-600 text-sm flex items-center mt-1'>
+                <svg
+                  className='w-4 h-4 mr-1 flex-shrink-0 animate-spin'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                >
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
                 </svg>
                 Validating...
               </p>
@@ -443,15 +658,11 @@ export function DynamicFormField({
 
       {/* Validation rules display */}
       {showValidationRules && (
-        <ValidationDisplay
-          field={field}
-          showRules={true}
-          className="mt-1"
-        />
+        <ValidationDisplay field={field} showRules={true} className='mt-1' />
       )}
 
       {/* Description for screen readers */}
-      <p id={`${field.name}-description`} className="sr-only">
+      <p id={`${field.name}-description`} className='sr-only'>
         {field.description || ''}
       </p>
     </div>

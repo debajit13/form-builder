@@ -121,6 +121,38 @@ class StorageManager {
     return this.getSchemas().find(schema => schema.id === id);
   }
 
+  saveSchema(schema: FormSchema): void {
+    try {
+      if (!schema || !schema.id) {
+        throw new Error('Invalid schema: Schema must have an id');
+      }
+
+      const schemas = this.getSchemas();
+      const existingIndex = schemas.findIndex(s => s.id === schema.id);
+
+      if (existingIndex >= 0) {
+        // Update existing schema
+        schemas[existingIndex] = schema;
+      } else {
+        // Add new schema
+        schemas.push(schema);
+      }
+
+      this.saveSchemas(schemas);
+    } catch (error) {
+      throw this.handleError('save schema', error);
+    }
+  }
+
+  deleteSchema(id: string): void {
+    try {
+      const schemas = this.getSchemas().filter(s => s.id !== id);
+      this.saveSchemas(schemas);
+    } catch (error) {
+      throw this.handleError('delete schema', error);
+    }
+  }
+
   // Form submission methods
   getSubmissions(formId?: string): FormSubmission[] {
     try {

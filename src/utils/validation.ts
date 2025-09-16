@@ -167,13 +167,13 @@ export class SchemaValidator {
 
     if (type === 'email' || validation?.format === 'email') {
       validator = validator.email({
-        message: validation.message || 'Invalid email format',
+        message: validation?.message || 'Invalid email format',
       });
     }
 
     if (validation?.format === 'url') {
       validator = validator.url({
-        message: validation.message || 'Invalid URL format',
+        message: validation?.message || 'Invalid URL format',
       });
     }
 
@@ -181,7 +181,7 @@ export class SchemaValidator {
       validator = validator.regex(
         /^[\+]?[1-9][\d]{0,15}$/,
         {
-          message: validation.message || 'Invalid phone number format',
+          message: validation?.message || 'Invalid phone number format',
         }
       );
     }

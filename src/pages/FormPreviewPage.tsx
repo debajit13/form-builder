@@ -31,7 +31,7 @@ export function FormPreviewPage() {
         setAllSchemas(schemas)
 
         if (isSpecificForm && id) {
-          const foundSchema = storage.getSchema(id)
+          const foundSchema = storage.getSchemaById(id)
           if (!foundSchema) {
             setError('Form not found')
             return
@@ -296,7 +296,7 @@ export function FormPreviewPage() {
 
       {/* Form Preview */}
       {schema && !submissionResult && (
-        <div key={schema.id} className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div key={schema.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <DynamicFormGenerator
             schema={schema}
             onSubmit={handleFormSubmit}

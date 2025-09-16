@@ -25,7 +25,7 @@ export function FormBuilderPage() {
         setAllSchemas(schemas)
 
         if (isEditing && id) {
-          const schema = storage.getSchema(id)
+          const schema = storage.getSchemaById(id)
           if (!schema) {
             setError('Form not found')
             return
@@ -46,18 +46,14 @@ export function FormBuilderPage() {
     loadData()
   }, [isEditing, isCreating, id])
 
-  const handleSave = (schema: FormSchema) => {
+  const handleSave = () => {
     try {
-      storage.saveSchema(schema)
-
-      // Navigate to edit mode if we were creating a new form
-      if (isCreating) {
-        navigate(`/builder/edit/${schema.id}`, { replace: true })
-      }
-
-      // Refresh the schemas list
+      // The FormBuilder handles the saving internally now
+      // Just refresh the schemas list
       setAllSchemas(storage.getSchemas())
-      setCurrentSchema(schema)
+
+      // If we were creating a new form, we'll stay on the current page
+      // since the FormBuilder will update the URL appropriately
     } catch (err) {
       setError('Failed to save form')
       console.error('Error saving form:', err)
@@ -223,8 +219,9 @@ export function FormBuilderPage() {
       {/* Form Builder */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <FormBuilder
-          initialSchema={currentSchema}
+          schema={currentSchema}
           onSave={handleSave}
+          onCancel={() => navigate('/builder')}
         />
       </div>
     </div>

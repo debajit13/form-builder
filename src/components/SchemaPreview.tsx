@@ -3,6 +3,76 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { FormSchema, FieldSchema, SelectOption } from '../types/schema';
 import { SchemaValidator } from '../utils/validation';
 
+// Helper function to extract error message from React Hook Form errors
+function getErrorMessage(error: any): string {
+  if (!error) return 'This field has an error';
+
+  // React Hook Form error can be:
+  // 1. { message: string, type: string, ... }
+  // 2. { message: { message: string }, type: string, ... }
+  // 3. String directly
+
+  // Direct string
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  // Standard React Hook Form error with string message
+  if (error.message && typeof error.message === 'string') {
+    return error.message;
+  }
+
+  // Handle complex error objects where message is nested
+  if (error.message && typeof error.message === 'object') {
+    // React Hook Form + Zod can create nested message structures
+    if (error.message.message && typeof error.message.message === 'string') {
+      return error.message.message;
+    }
+
+    // Sometimes the message is in a different property
+    if (error.message.text && typeof error.message.text === 'string') {
+      return error.message.text;
+    }
+
+    // Zod error array structure
+    if (Array.isArray(error.message) && error.message.length > 0) {
+      const firstIssue = error.message[0];
+      if (firstIssue && typeof firstIssue.message === 'string') {
+        return firstIssue.message;
+      }
+    }
+  }
+
+  // Try alternative properties
+  if (error.text && typeof error.text === 'string') return error.text;
+  if (error.error && typeof error.error === 'string') return error.error;
+
+  // Generate message based on error type
+  if (error.type) {
+    switch (error.type) {
+      case 'required':
+        return 'This field is required';
+      case 'min':
+        return 'Value is too small';
+      case 'max':
+        return 'Value is too large';
+      case 'minLength':
+        return 'Text is too short';
+      case 'maxLength':
+        return 'Text is too long';
+      case 'pattern':
+        return 'Invalid format';
+      case 'email':
+        return 'Invalid email address';
+      default:
+        return `Invalid value (${error.type})`;
+    }
+  }
+
+  // Absolute fallback
+  return 'This field has an error';
+}
+
 interface SchemaPreviewProps {
   schema: FormSchema;
   onSubmit?: (data: any) => void;
@@ -280,7 +350,7 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
 
         {hasError && (
           <p className="text-sm text-red-600">
-            {fieldError?.message?.toString() || 'This field has an error'}
+{getErrorMessage(fieldError)}
           </p>
         )}
       </div>

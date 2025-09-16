@@ -110,14 +110,14 @@ describe('Storage Utilities', () => {
       }
 
       localStorage.getItem.mockReturnValue(JSON.stringify([schema]))
-      const result = storage.getSchema('target-schema')
+      const result = storage.getSchemaById('target-schema')
       expect(result).toEqual(schema)
     })
 
-    it('should return null for non-existent schema', () => {
+    it('should return undefined for non-existent schema', () => {
       localStorage.getItem.mockReturnValue(JSON.stringify([]))
-      const result = storage.getSchema('non-existent')
-      expect(result).toBeNull()
+      const result = storage.getSchemaById('non-existent')
+      expect(result).toBeUndefined()
     })
   })
 
