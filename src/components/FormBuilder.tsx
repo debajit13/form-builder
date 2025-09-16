@@ -15,7 +15,17 @@ interface FormBuilderProps {
 export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   const { updateSchema, createSchema } = useSchemaManager();
   const [currentSchema, setCurrentSchema] = useState<FormSchema>(() => {
-    return schema || new SchemaBuilder('New Form', 'Description').build();
+    if (schema) {
+      return schema;
+    }
+    // Create a new schema with a default section
+    const builder = new SchemaBuilder('New Form', 'Description');
+    builder.addSection('General Information', 'Basic form fields')
+      .addTextField('sample_field', 'Sample Field', {
+        placeholder: 'Enter some text here',
+        description: 'This is a sample field to get you started'
+      });
+    return builder.build();
   });
   const [activeTab, setActiveTab] = useState<'builder' | 'preview'>('builder');
   const [editingField, setEditingField] = useState<{
