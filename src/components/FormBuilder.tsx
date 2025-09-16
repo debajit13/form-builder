@@ -137,28 +137,16 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   };
 
   const handleSave = async () => {
-    console.log('=== SAVE DEBUG ===');
-    console.log('schema (initial):', schema);
-    console.log('currentSchema:', currentSchema);
-    console.log('isSaving:', isSaving);
-
     setIsSaving(true);
     try {
-      console.log('Saving schema using storage.saveSchema');
       storage.saveSchema(currentSchema);
-      console.log('Schema saved successfully');
-
       toast.success('Schema saved successfully!');
-
-      console.log('Calling onSave callback');
       onSave();
-      console.log('Save completed successfully');
     } catch (error) {
       console.error('Failed to save schema:', error);
       toast.error('Failed to save schema. Please try again.');
     } finally {
       setIsSaving(false);
-      console.log('=== SAVE DEBUG END ===');
     }
   };
 
@@ -220,10 +208,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
               </div>
 
               <button
-                onClick={() => {
-                  console.log('BUTTON CLICKED!');
-                  handleSave();
-                }}
+                onClick={handleSave}
                 disabled={isSaving}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >

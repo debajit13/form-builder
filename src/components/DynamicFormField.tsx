@@ -553,38 +553,7 @@ export function DynamicFormField({
                     clipRule='evenodd'
                   />
                 </svg>
-{(() => {
-                  // Debug: Try different approaches to get the message
-                  if (!fieldError) return 'No error';
-
-                  console.log('ERROR DEBUG:', {
-                    fullError: fieldError,
-                    message: fieldError.message,
-                    type: fieldError.type,
-                    ref: fieldError.ref,
-                    keys: Object.keys(fieldError)
-                  });
-
-                  // Try multiple approaches
-                  let errorMessage = '';
-
-                  if (typeof fieldError === 'string') {
-                    errorMessage = fieldError;
-                  } else if (fieldError.message) {
-                    if (typeof fieldError.message === 'string') {
-                      errorMessage = fieldError.message;
-                    } else {
-                      errorMessage = JSON.stringify(fieldError.message);
-                    }
-                  } else if (fieldError.type) {
-                    errorMessage = `Validation error: ${fieldError.type}`;
-                  } else {
-                    errorMessage = 'Invalid value';
-                  }
-
-                  console.log('Final error message:', errorMessage);
-                  return errorMessage;
-                })()}
+                {getErrorMessage(fieldError)}
               </p>
             )}
 
@@ -605,7 +574,7 @@ export function DynamicFormField({
                     clipRule='evenodd'
                   />
                 </svg>
-                {String(validationState.error)}
+                {getErrorMessage(validationState.error)}
               </p>
             )}
 
