@@ -11,13 +11,13 @@ const localStorageMock = {
   key: vi.fn(),
 }
 
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(globalThis as any, 'localStorage', {
   value: localStorageMock,
   writable: true,
 })
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(globalThis as any, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
     matches: false,
@@ -32,14 +32,14 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
+(globalThis as any).ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
 
 // Mock crypto
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(globalThis as any, 'crypto', {
   value: {
     randomUUID: () => 'mock-uuid-1234-5678',
   },

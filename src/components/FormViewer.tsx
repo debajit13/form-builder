@@ -55,7 +55,7 @@ export function FormViewer() {
           />
 
           {/* Debug Information */}
-          {process.env.NODE_ENV === 'development' && submissionData && (
+          {import.meta.env.DEV && submissionData && (
             <div className="mt-8 max-w-4xl mx-auto">
               <div className="bg-gray-900 rounded-lg p-4">
                 <h3 className="text-white font-medium mb-2">Debug: Submitted Data</h3>

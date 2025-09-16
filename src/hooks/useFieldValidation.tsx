@@ -34,7 +34,7 @@ export function useFieldValidation({
     isValidating: false
   });
 
-  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [debounceTimer, setDebounceTimer] = useState<number | null>(null);
 
   const validateField = useCallback(async (currentValue: any, immediate = false) => {
     // Clear existing timer
@@ -108,7 +108,7 @@ export function useFieldValidation({
       performValidation();
     } else {
       const timer = setTimeout(performValidation, debounceMs);
-      setDebounceTimer(timer);
+      setDebounceTimer(timer as unknown as number);
     }
   }, [field, formData, debounceMs, debounceTimer]);
 
