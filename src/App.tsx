@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard'
 import { FormBuilderPage } from './pages/FormBuilderPage'
 import { FormPreviewPage } from './pages/FormPreviewPage'
 import { DataManagementPage } from './pages/DataManagementPage'
+import { SubmissionDetailsPage } from './pages/SubmissionDetailsPage'
 // Import sample data to auto-populate in development
 import './utils/sampleData'
 import 'react-toastify/dist/ReactToastify.css'
@@ -28,7 +29,7 @@ function App() {
 
           {/* Data Management Routes */}
           <Route path="data" element={<DataManagementPage />} />
-          <Route path="data/submissions/:id" element={<div className="text-center py-12"><h2 className="text-xl font-semibold text-gray-900">Submission Details</h2><p className="text-gray-600 mt-2">Detailed submission view will be implemented here.</p></div>} />
+          <Route path="data/submissions/:id" element={<SubmissionDetailsPage />} />
         </Route>
       </Routes>
       <ToastContainer
