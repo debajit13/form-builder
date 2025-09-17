@@ -275,7 +275,7 @@ export function DynamicFormGenerator({
                     steps={formSteps}
                     currentStep={currentStep}
                     onStepClick={handleStepClick}
-                    variant="light"
+                    variant="dark"
                   />
                 </div>
               )}

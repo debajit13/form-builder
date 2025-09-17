@@ -77,11 +77,11 @@ export function FormProgressIndicator({
     } else {
       switch (status) {
         case 'completed':
-          return `${baseClasses} text-gray-900 font-bold`;
+          return `${baseClasses} text-white font-bold drop-shadow-lg`;
         case 'current':
-          return `${baseClasses} text-gray-900 font-bold`;
+          return `${baseClasses} text-white font-bold drop-shadow-lg`;
         case 'upcoming':
-          return `${baseClasses} text-gray-800 font-semibold`;
+          return `${baseClasses} text-white/90 font-semibold drop-shadow-lg`;
       }
     }
   };
@@ -136,7 +136,7 @@ export function FormProgressIndicator({
             {showFieldCount && (
               <div
                 className={`text-xs mt-1 ${
-                  variant === 'light' ? 'text-gray-500' : 'text-gray-800 font-semibold'
+                  variant === 'light' ? 'text-gray-500' : 'text-white/80 font-semibold drop-shadow-lg'
                 }`}
               >
                 {step.fields} field{step.fields !== 1 ? 's' : ''}
@@ -148,10 +148,10 @@ export function FormProgressIndicator({
 
       {/* Progress Percentage */}
       <div className="mt-4 flex items-center justify-between text-sm">
-        <span className={variant === 'light' ? 'text-gray-600' : 'text-gray-900 font-bold'}>
+        <span className={variant === 'light' ? 'text-gray-600' : 'text-white font-bold drop-shadow-lg'}>
           Step {currentStep + 1} of {steps.length}
         </span>
-        <span className={variant === 'light' ? 'text-gray-600' : 'text-gray-900 font-bold'}>
+        <span className={variant === 'light' ? 'text-gray-600' : 'text-white font-bold drop-shadow-lg'}>
           {Math.round(((currentStep + 1) / steps.length) * 100)}% complete
         </span>
       </div>

@@ -80,6 +80,9 @@ export function Navigation() {
                 <h1 className="text-xl font-bold text-gray-900">Dynamic Form Builder</h1>
                 <p className="text-xs text-gray-500">Create powerful forms with ease</p>
               </div>
+              <div className="sm:hidden">
+                <h1 className="text-lg font-bold text-gray-900">Form Builder</h1>
+              </div>
             </Link>
           </div>
 

@@ -174,18 +174,18 @@ export function FormPreviewPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Form Preview</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Form Preview</h1>
           <p className="text-gray-600 mt-2">
             Test your forms and see how they look to your users.
           </p>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4">
           {/* Form Selector (only show if not viewing a specific form) */}
           {isFormSelector && allSchemas.length > 1 && (
-            <div className="min-w-0">
+            <div className="w-full sm:min-w-0 sm:w-auto">
               <select
                 value={selectedSchemaId}
                 onChange={(e) => handleSchemaChange(e.target.value)}
@@ -201,12 +201,12 @@ export function FormPreviewPage() {
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-2">
             {schema && (
               <>
                 <Link
                   to={`/builder/edit/${schema.id}`}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -216,7 +216,7 @@ export function FormPreviewPage() {
 
                 <Link
                   to={`/data?formId=${schema.id}`}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -229,7 +229,7 @@ export function FormPreviewPage() {
             {isSpecificForm && (
               <Link
                 to="/preview"
-                className="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center justify-center px-3 py-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors text-sm"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -311,7 +311,7 @@ export function FormPreviewPage() {
 
       {/* Form Preview */}
       {schema && !submissionResult && (
-        <div key={schema.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div key={schema.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
           <DynamicFormGenerator
             schema={schema}
             onSubmit={handleFormSubmit}
@@ -323,12 +323,12 @@ export function FormPreviewPage() {
 
       {/* Form Info */}
       {schema && (
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Form Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <dt className="text-sm font-medium text-gray-500">Form Title</dt>
-              <dd className="mt-1 text-sm text-gray-900">{schema.title}</dd>
+              <dd className="mt-1 text-sm text-gray-900 break-words">{schema.title}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Sections</dt>
@@ -347,9 +347,9 @@ export function FormPreviewPage() {
               </dd>
             </div>
             {schema.description && (
-              <div className="md:col-span-2 lg:col-span-4">
+              <div className="col-span-2 sm:col-span-2 lg:col-span-4">
                 <dt className="text-sm font-medium text-gray-500">Description</dt>
-                <dd className="mt-1 text-sm text-gray-900">{schema.description}</dd>
+                <dd className="mt-1 text-sm text-gray-900 break-words">{schema.description}</dd>
               </div>
             )}
           </div>
