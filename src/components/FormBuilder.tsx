@@ -156,16 +156,16 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Mobile Header */}
           <div className="flex flex-col space-y-4 py-4 sm:hidden">
             <div className="flex items-center justify-between">
               <button
                 onClick={onCancel}
-                className="text-gray-500 hover:text-gray-700 p-2"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 p-2"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -174,7 +174,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -185,28 +185,28 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                 type="text"
                 value={currentSchema.title}
                 onChange={(e) => handleSchemaChange({ title: e.target.value })}
-                className="w-full text-lg font-semibold text-gray-900 bg-transparent border-0 focus:ring-0 focus:outline-none px-0"
+                className="w-full text-lg font-semibold text-gray-900 dark:text-white bg-transparent border-0 focus:ring-0 focus:outline-none px-0 dark:placeholder-gray-400"
                 placeholder="Form Title"
               />
               <input
                 type="text"
                 value={currentSchema.description || ''}
                 onChange={(e) => handleSchemaChange({ description: e.target.value })}
-                className="w-full text-sm text-gray-500 bg-transparent border-0 focus:ring-0 focus:outline-none px-0"
+                className="w-full text-sm text-gray-500 dark:text-gray-400 bg-transparent border-0 focus:ring-0 focus:outline-none px-0 dark:placeholder-gray-500"
                 placeholder="Form description (optional)"
               />
             </div>
 
             {/* Mobile Tabs */}
-            <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+            <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as 'builder' | 'preview')}
                   className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <span className="mr-1 text-xs">{tab.icon}</span>
@@ -221,7 +221,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
             <div className="flex items-center space-x-4">
               <button
                 onClick={onCancel}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -232,14 +232,14 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                   type="text"
                   value={currentSchema.title}
                   onChange={(e) => handleSchemaChange({ title: e.target.value })}
-                  className="text-xl font-semibold text-gray-900 bg-transparent border-0 focus:ring-0 focus:outline-none px-0"
+                  className="text-xl font-semibold text-gray-900 dark:text-white bg-transparent border-0 focus:ring-0 focus:outline-none px-0 dark:placeholder-gray-400"
                   placeholder="Form Title"
                 />
                 <input
                   type="text"
                   value={currentSchema.description || ''}
                   onChange={(e) => handleSchemaChange({ description: e.target.value })}
-                  className="block text-sm text-gray-500 bg-transparent border-0 focus:ring-0 focus:outline-none px-0 w-96"
+                  className="block text-sm text-gray-500 dark:text-gray-400 bg-transparent border-0 focus:ring-0 focus:outline-none px-0 w-96 dark:placeholder-gray-500"
                   placeholder="Form description (optional)"
                 />
               </div>
@@ -247,15 +247,15 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
 
             <div className="flex items-center space-x-4">
               {/* Desktop Tabs */}
-              <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+              <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'builder' | 'preview')}
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                       activeTab === tab.id
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     <span className="mr-1">{tab.icon}</span>
@@ -267,7 +267,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSaving ? 'Saving...' : 'Save Schema'}
               </button>
@@ -281,12 +281,12 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
           <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Schema Structure */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-lg shadow">
-                <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
-                  <h3 className="text-lg font-medium text-gray-900">Form Structure</h3>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10">
+                <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">Form Structure</h3>
                   <button
                     onClick={handleAddSection}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors w-full sm:w-auto"
+                    className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors w-full sm:w-auto"
                   >
                     Add Section
                   </button>
@@ -313,12 +313,12 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                       <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">No sections yet</h3>
-                      <p className="mt-1 text-sm text-gray-500">Get started by adding your first section.</p>
+                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No sections yet</h3>
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by adding your first section.</p>
                       <div className="mt-6">
                         <button
                           onClick={handleAddSection}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
                         >
                           Add Section
                         </button>
@@ -332,12 +332,12 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
             {/* Field Editor */}
             <div className="lg:sticky lg:top-8">
               {editingField ? (
-                <div className="bg-white rounded-lg shadow">
-                  <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h3 className="text-lg font-medium text-gray-900">Edit Field</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10">
+                  <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Edit Field</h3>
                     <button
                       onClick={() => setEditingField(null)}
-                      className="text-gray-400 hover:text-gray-500 p-1"
+                      className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 p-1"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -359,12 +359,12 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10 p-4 sm:p-6 text-center">
                   <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No field selected</h3>
-                  <p className="mt-1 text-sm text-gray-500">Click on a field to edit its properties.</p>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No field selected</h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Click on a field to edit its properties.</p>
                 </div>
               )}
             </div>

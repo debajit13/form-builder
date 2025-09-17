@@ -69,7 +69,7 @@ export function Breadcrumbs() {
           <li key={index} className="inline-flex items-center">
             {index > 0 && (
               <svg
-                className="w-4 h-4 text-gray-400 mx-1 md:mx-2"
+                className="w-4 h-4 text-gray-400 dark:text-gray-500 mx-1 md:mx-2"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
@@ -85,12 +85,12 @@ export function Breadcrumbs() {
             {item.href ? (
               <Link
                 to={item.href}
-                className="text-sm font-medium text-gray-500 hover:text-blue-700 transition-colors"
+                className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               >
                 {item.name}
               </Link>
             ) : (
-              <span className="text-sm font-medium text-gray-900" aria-current="page">
+              <span className="text-sm font-medium text-gray-900 dark:text-white" aria-current="page">
                 {item.name}
               </span>
             )}

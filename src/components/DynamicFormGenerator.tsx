@@ -256,7 +256,7 @@ export function DynamicFormGenerator({
       <div className={`max-w-4xl mx-auto ${className}`}>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
           {/* Form Header */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-gray-900/10 overflow-hidden">
             <div
               className="px-6 py-8 text-white"
               style={{
@@ -266,7 +266,7 @@ export function DynamicFormGenerator({
             >
               <h1 className="text-2xl font-bold mb-2">{schema.title}</h1>
               {schema.description && (
-                <p className="text-blue-100">{schema.description}</p>
+                <p className="text-blue-100 dark:text-blue-200">{schema.description}</p>
               )}
 
               {shouldShowProgress && isMultiStep && (
@@ -285,7 +285,7 @@ export function DynamicFormGenerator({
             <div className="p-6">
               {/* Validation Errors */}
               {validationErrors.length > 0 && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+                <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
                   <div className="flex">
                     <div className="flex-shrink-0">
                       <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -293,10 +293,10 @@ export function DynamicFormGenerator({
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">
+                      <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
                         Please correct the following errors:
                       </h3>
-                      <div className="mt-2 text-sm text-red-700">
+                      <div className="mt-2 text-sm text-red-700 dark:text-red-400">
                         <ul className="list-disc space-y-1 pl-5">
                           {validationErrors.map((error, index) => (
                             <li key={index}>{error.message}</li>
@@ -339,14 +339,14 @@ export function DynamicFormGenerator({
             </div>
 
             {/* Form Actions */}
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <div className="flex items-center space-x-4">
                 {/* Draft Save */}
                 {(allowDrafts ?? schema.settings.allowDrafts) && (
                   <button
                     type="button"
                     onClick={handleSaveDraft}
-                    className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white text-sm font-medium"
                   >
                     💾 Save Draft
                   </button>
@@ -356,7 +356,7 @@ export function DynamicFormGenerator({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white text-sm font-medium"
                 >
                   {resetButtonText || schema.settings.resetButtonText || 'Reset'}
                 </button>
@@ -370,7 +370,7 @@ export function DynamicFormGenerator({
                       <button
                         type="button"
                         onClick={handlePrevStep}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors"
                       >
                         ← Previous
                       </button>
@@ -380,7 +380,7 @@ export function DynamicFormGenerator({
                       <button
                         type="button"
                         onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
+                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-md font-medium transition-colors"
                         style={{
                           backgroundColor: schema.settings.theme?.primaryColor || '#3b82f6'
                         }}
@@ -391,7 +391,7 @@ export function DynamicFormGenerator({
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
+                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                         style={{
                           backgroundColor: schema.settings.theme?.primaryColor || '#3b82f6'
                         }}
@@ -407,7 +407,7 @@ export function DynamicFormGenerator({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                     style={{
                       backgroundColor: schema.settings.theme?.primaryColor || '#3b82f6'
                     }}

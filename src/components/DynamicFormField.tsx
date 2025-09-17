@@ -113,20 +113,20 @@ export function DynamicFormField({
   // Base styling with theme support and validation states
   const getValidationClasses = () => {
     if (hasError) {
-      return 'border-red-300 focus:ring-red-500 focus:border-red-500 shadow-sm';
+      return 'border-red-300 dark:border-red-600 focus:ring-red-500 focus:border-red-500 shadow-sm';
     }
     if (validationState.status === 'valid' && validationState.isTouched) {
-      return 'border-green-300 focus:ring-green-500 focus:border-green-500 shadow-sm';
+      return 'border-green-300 dark:border-green-600 focus:ring-green-500 focus:border-green-500 shadow-sm';
     }
     if (validationState.status === 'validating') {
-      return 'border-blue-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm';
+      return 'border-blue-300 dark:border-blue-600 focus:ring-blue-500 focus:border-blue-500 shadow-sm';
     }
-    return 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:border-gray-400';
+    return 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:border-gray-400 dark:hover:border-gray-500';
   };
 
   const baseClasses = `w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${getValidationClasses()} ${
-    field.disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white'
-  } ${field.readonly ? 'bg-gray-50 cursor-default' : ''}`;
+    field.disabled ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-60' : 'bg-white dark:bg-gray-800'
+  } ${field.readonly ? 'bg-gray-50 dark:bg-gray-700 cursor-default' : ''} text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`;
 
   const getThemeClasses = () => {
     const borderRadius = theme?.borderRadius || 'md';
@@ -173,7 +173,7 @@ export function DynamicFormField({
         return (
           <div className='relative'>
             {numberField.prefix && (
-              <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none'>
+              <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none'>
                 {numberField.prefix}
               </span>
             )}
@@ -208,7 +208,7 @@ export function DynamicFormField({
               }}
             />
             {numberField.suffix && (
-              <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none'>
+              <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none'>
                 {numberField.suffix}
               </span>
             )}
@@ -361,7 +361,7 @@ export function DynamicFormField({
                 />
                 <span
                   className={`${
-                    option.disabled ? 'text-gray-400' : 'text-gray-700'
+                    option.disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
                   }`}
                   style={{
                     fontSize:
@@ -410,7 +410,7 @@ export function DynamicFormField({
                   />
                   <span
                     className={`${
-                      option.disabled ? 'text-gray-400' : 'text-gray-700'
+                      option.disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
                     }`}
                     style={{
                       fontSize:
@@ -443,7 +443,7 @@ export function DynamicFormField({
               }}
             />
             <span
-              className='text-gray-700'
+              className='text-gray-700 dark:text-gray-300'
               style={{
                 fontSize:
                   theme?.fontSize === 'sm'
@@ -503,7 +503,7 @@ export function DynamicFormField({
         <label
           htmlFor={field.name}
           className={`block text-sm font-medium transition-colors ${
-            hasError ? 'text-red-700' : 'text-gray-700'
+            hasError ? 'text-red-700 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'
           }`}
         >
           {field.label}
@@ -515,7 +515,7 @@ export function DynamicFormField({
 
       {/* Field Description */}
       {field.description && (
-        <p className='text-xs text-gray-500 mt-1'>{field.description}</p>
+        <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>{field.description}</p>
       )}
 
       {/* Field Input */}
@@ -524,7 +524,7 @@ export function DynamicFormField({
 
         {/* Field Unit (for number fields) */}
         {field.type === 'number' && (field as any).unit && (
-          <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-sm'>
+          <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none text-sm'>
             {(field as any).unit}
           </span>
         )}
@@ -539,7 +539,7 @@ export function DynamicFormField({
             {fieldError && (
               <p
                 id={`${field.name}-error`}
-                className='text-red-600 text-sm flex items-center mt-1'
+                className='text-red-600 dark:text-red-400 text-sm flex items-center mt-1'
                 role='alert'
               >
                 <svg
@@ -560,7 +560,7 @@ export function DynamicFormField({
             {validationState.error && !fieldError && (
               <p
                 id={`${field.name}-error`}
-                className='text-red-600 text-sm flex items-center mt-1'
+                className='text-red-600 dark:text-red-400 text-sm flex items-center mt-1'
                 role='alert'
               >
                 <svg
@@ -581,7 +581,7 @@ export function DynamicFormField({
             {validationState.status === 'valid' &&
               validationState.isTouched &&
               !hasError && (
-                <p className='text-green-600 text-sm flex items-center mt-1'>
+                <p className='text-green-600 dark:text-green-400 text-sm flex items-center mt-1'>
                   <svg
                     className='w-4 h-4 mr-1 flex-shrink-0'
                     fill='currentColor'
@@ -598,7 +598,7 @@ export function DynamicFormField({
               )}
 
             {validationState.status === 'validating' && (
-              <p className='text-blue-600 text-sm flex items-center mt-1'>
+              <p className='text-blue-600 dark:text-blue-400 text-sm flex items-center mt-1'>
                 <svg
                   className='w-4 h-4 mr-1 flex-shrink-0 animate-spin'
                   fill='none'

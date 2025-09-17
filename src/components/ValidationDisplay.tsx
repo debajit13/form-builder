@@ -74,13 +74,13 @@ export function ValidationDisplay({
   const getStatusColor = () => {
     switch (status) {
       case 'validating':
-        return 'text-blue-600';
+        return 'text-blue-600 dark:text-blue-400';
       case 'valid':
-        return 'text-green-600';
+        return 'text-green-600 dark:text-green-400';
       case 'error':
-        return 'text-red-600';
+        return 'text-red-600 dark:text-red-400';
       default:
-        return 'text-gray-500';
+        return 'text-gray-500 dark:text-gray-400';
     }
   };
 
@@ -102,7 +102,7 @@ export function ValidationDisplay({
       <div className={`flex items-center space-x-1 ${className}`}>
         {getStatusIcon()}
         {error && (
-          <span className="text-xs text-red-600">{error.message}</span>
+          <span className="text-xs text-red-600 dark:text-red-400">{error.message}</span>
         )}
       </div>
     );
@@ -112,16 +112,16 @@ export function ValidationDisplay({
     <div className={`space-y-2 ${className}`}>
       {/* Error Message */}
       {error && (
-        <div className="flex items-start space-x-2 p-2 bg-red-50 border border-red-200 rounded-md">
+        <div className="flex items-start space-x-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
           <div className="flex-shrink-0 mt-0.5">
             {getStatusIcon()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-red-800 font-medium">
+            <p className="text-sm text-red-800 dark:text-red-300 font-medium">
               {error.message}
             </p>
             {error.type && (
-              <p className="text-xs text-red-600 mt-1">
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                 Error type: {error.type}
               </p>
             )}
@@ -131,11 +131,11 @@ export function ValidationDisplay({
 
       {/* Success Message */}
       {status === 'valid' && !error && showSuccess && (
-        <div className="flex items-center space-x-2 p-2 bg-green-50 border border-green-200 rounded-md">
+        <div className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
           <div className="flex-shrink-0">
             {getStatusIcon()}
           </div>
-          <p className="text-sm text-green-800">
+          <p className="text-sm text-green-800 dark:text-green-300">
             Valid input
           </p>
         </div>
@@ -143,11 +143,11 @@ export function ValidationDisplay({
 
       {/* Validating State */}
       {status === 'validating' && (
-        <div className="flex items-center space-x-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+        <div className="flex items-center space-x-2 p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
           <div className="flex-shrink-0">
             {getStatusIcon()}
           </div>
-          <p className="text-sm text-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-300">
             Validating...
           </p>
         </div>
@@ -157,7 +157,7 @@ export function ValidationDisplay({
       {showRules && validationRules.length > 0 && (
         <div className="mt-2">
           <details className="group">
-            <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-800 select-none">
+            <summary className="text-xs text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-800 dark:hover:text-gray-200 select-none">
               <span className="inline-flex items-center">
                 <svg
                   className="w-3 h-3 mr-1 transition-transform group-open:rotate-90"
@@ -176,8 +176,8 @@ export function ValidationDisplay({
             <div className="mt-2 ml-4 space-y-1">
               {validationRules.map((rule, index) => (
                 <div key={index} className="flex items-center space-x-2">
-                  <div className="w-1 h-1 bg-gray-400 rounded-full flex-shrink-0" />
-                  <span className="text-xs text-gray-600">{rule}</span>
+                  <div className="w-1 h-1 bg-gray-400 dark:bg-gray-500 rounded-full flex-shrink-0" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400">{rule}</span>
                 </div>
               ))}
             </div>
@@ -272,7 +272,7 @@ export function ValidationSummary({
   const hasMore = errors.length > maxDisplay;
 
   return (
-    <div className={`bg-red-50 border border-red-200 rounded-md p-4 ${className}`}>
+    <div className={`bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4 ${className}`}>
       <div className="flex">
         <div className="flex-shrink-0">
           <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -284,10 +284,10 @@ export function ValidationSummary({
           </svg>
         </div>
         <div className="ml-3 flex-1">
-          <h3 className="text-sm font-medium text-red-800">
+          <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
             {title} ({errors.length})
           </h3>
-          <div className="mt-2 text-sm text-red-700">
+          <div className="mt-2 text-sm text-red-700 dark:text-red-400">
             <ul className="list-disc space-y-1 pl-5">
               {displayErrors.map((error, index) => (
                 <li key={`${error.field}-${index}`}>
@@ -295,7 +295,7 @@ export function ValidationSummary({
                 </li>
               ))}
               {hasMore && (
-                <li className="text-red-600 font-medium">
+                <li className="text-red-600 dark:text-red-400 font-medium">
                   ... and {errors.length - maxDisplay} more errors
                 </li>
               )}

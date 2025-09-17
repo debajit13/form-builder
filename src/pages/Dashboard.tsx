@@ -89,8 +89,8 @@ export function Dashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Welcome to your form builder dashboard. Create, manage, and analyze your forms.
         </p>
       </div>
@@ -140,8 +140,8 @@ export function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <QuickActionCard
             title="Create New Form"
@@ -182,9 +182,9 @@ export function Dashboard() {
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Forms */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Forms</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Forms</h2>
             <Link
               to="/builder"
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -194,7 +194,7 @@ export function Dashboard() {
           </div>
 
           {recentForms.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -211,11 +211,11 @@ export function Dashboard() {
               {recentForms.map((form) => (
                 <div
                   key={form.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{form.title}</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-medium text-gray-900 dark:text-white">{form.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Updated {new Date(form.metadata.updatedAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -240,9 +240,9 @@ export function Dashboard() {
         </div>
 
         {/* Recent Submissions */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Submissions</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Submissions</h2>
             <Link
               to="/data"
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -252,7 +252,7 @@ export function Dashboard() {
           </div>
 
           {recentSubmissions.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
@@ -263,11 +263,11 @@ export function Dashboard() {
               {recentSubmissions.map((submission) => (
                 <div
                   key={submission.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">Form Submission</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-medium text-gray-900 dark:text-white">Form Submission</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date((submission as any).submittedAt || (submission as any).metadata?.submittedAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -312,14 +312,14 @@ function StatCard({ title, value, icon, color }: StatCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center">
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
           {icon}
         </div>
         <div className="ml-4">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value.toLocaleString()}</p>
         </div>
       </div>
     </div>
@@ -344,15 +344,15 @@ function QuickActionCard({ title, description, icon, href, color }: QuickActionC
   return (
     <Link
       to={href}
-      className="group block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 hover:border-gray-300"
+      className="group block p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-600"
     >
       <div className={`inline-flex p-3 rounded-lg ${colorClasses[color]} transition-colors`}>
         {icon}
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+      <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
         {title}
       </h3>
-      <p className="mt-2 text-sm text-gray-600">{description}</p>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{description}</p>
     </Link>
   )
 }

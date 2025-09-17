@@ -44,7 +44,7 @@ export function LoadingSpinner({
     return (
       <span className="inline-flex items-center gap-2">
         {spinnerElement}
-        {text && <span className="text-sm text-gray-600">{text}</span>}
+        {text && <span className="text-sm text-gray-600 dark:text-gray-400">{text}</span>}
       </span>
     );
   }
@@ -53,7 +53,7 @@ export function LoadingSpinner({
     <div className="flex flex-col items-center justify-center gap-3">
       {spinnerElement}
       {text && (
-        <p className="text-sm text-gray-600 font-medium">{text}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{text}</p>
       )}
     </div>
   );
@@ -73,7 +73,7 @@ export function LoadingSkeleton({
       {Array.from({ length: lines }).map((_, index) => (
         <div
           key={index}
-          className={`${height} bg-gray-200 rounded shimmer`}
+          className={`${height} bg-gray-200 dark:bg-gray-700 rounded shimmer`}
           style={{
             width: index === lines - 1 ? '75%' : '100%'
           }}
@@ -86,16 +86,16 @@ export function LoadingSkeleton({
 
 export function LoadingCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white rounded-lg shadow p-6 ${className}`} role="status" aria-label="Loading card">
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10 p-6 ${className}`} role="status" aria-label="Loading card">
       <div className="space-y-4">
-        <div className="h-6 bg-gray-200 rounded shimmer w-3/4" />
+        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded shimmer w-3/4" />
         <div className="space-y-2">
-          <div className="h-4 bg-gray-200 rounded shimmer" />
-          <div className="h-4 bg-gray-200 rounded shimmer w-5/6" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded shimmer" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded shimmer w-5/6" />
         </div>
         <div className="flex gap-2 pt-2">
-          <div className="h-8 bg-gray-200 rounded shimmer w-20" />
-          <div className="h-8 bg-gray-200 rounded shimmer w-16" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded shimmer w-20" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded shimmer w-16" />
         </div>
       </div>
       <span className="sr-only">Loading card content...</span>

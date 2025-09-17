@@ -79,10 +79,10 @@ export function DynamicFormSection({
   return (
     <section className="space-y-4 sm:space-y-6" aria-labelledby={`section-${section.id}`}>
       {/* Section Header */}
-      <div className="border-b border-gray-200 pb-3 sm:pb-4">
+      <div className="border-b border-gray-200 dark:border-gray-700 pb-3 sm:pb-4">
         <h2
           id={`section-${section.id}`}
-          className="text-base sm:text-lg font-semibold text-gray-900 leading-tight"
+          className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white leading-tight"
           style={{
             fontSize: theme?.fontSize === 'sm' ? '1rem' : theme?.fontSize === 'lg' ? '1.25rem' : '1.125rem'
           }}
@@ -90,7 +90,7 @@ export function DynamicFormSection({
           {section.title}
         </h2>
         {section.description && (
-          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
             {section.description}
           </p>
         )}

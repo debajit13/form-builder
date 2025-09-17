@@ -135,8 +135,8 @@ export function FormPreviewPage() {
           <svg className="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
-          <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
-          <p className="text-red-600 mb-4">{error}</p>
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Error</h3>
+          <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
           <Link
             to="/preview"
             className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -154,8 +154,8 @@ export function FormPreviewPage() {
         <svg className="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No forms available</h3>
-        <p className="text-gray-600 mb-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No forms available</h3>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
           Create a form first to preview it here.
         </p>
         <Link
@@ -176,8 +176,8 @@ export function FormPreviewPage() {
       {/* Header */}
       <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Form Preview</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Form Preview</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
             Test your forms and see how they look to your users.
           </p>
         </div>
@@ -189,7 +189,7 @@ export function FormPreviewPage() {
               <select
                 value={selectedSchemaId}
                 onChange={(e) => handleSchemaChange(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 {allSchemas.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -206,7 +206,7 @@ export function FormPreviewPage() {
               <>
                 <Link
                   to={`/builder/edit/${schema.id}`}
-                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -216,7 +216,7 @@ export function FormPreviewPage() {
 
                 <Link
                   to={`/data?formId=${schema.id}`}
-                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -229,7 +229,7 @@ export function FormPreviewPage() {
             {isSpecificForm && (
               <Link
                 to="/preview"
-                className="inline-flex items-center justify-center px-3 py-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                className="inline-flex items-center justify-center px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -245,8 +245,8 @@ export function FormPreviewPage() {
       {submissionResult && (
         <div className={`rounded-lg p-6 ${
           submissionResult.success
-            ? 'bg-green-50 border border-green-200'
-            : 'bg-red-50 border border-red-200'
+            ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+            : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
         }`}>
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -262,19 +262,19 @@ export function FormPreviewPage() {
             </div>
             <div className="ml-3 flex-1">
               <h3 className={`text-lg font-semibold ${
-                submissionResult.success ? 'text-green-800' : 'text-red-800'
+                submissionResult.success ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'
               }`}>
                 {submissionResult.success ? 'Success!' : 'Error'}
               </h3>
               <p className={`mt-1 ${
-                submissionResult.success ? 'text-green-700' : 'text-red-700'
+                submissionResult.success ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
               }`}>
                 {submissionResult.message}
               </p>
               {submissionResult.success && submissionResult.data && (
                 <div className="mt-4 p-4 bg-white rounded-md border border-green-200">
-                  <h4 className="font-medium text-gray-900 mb-2">Submitted Data:</h4>
-                  <pre className="text-sm text-gray-700 overflow-auto">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Submitted Data:</h4>
+                  <pre className="text-sm text-gray-700 dark:text-gray-300 overflow-auto">
                     {JSON.stringify(submissionResult.data, null, 2)}
                   </pre>
                 </div>
@@ -282,7 +282,7 @@ export function FormPreviewPage() {
               <div className="mt-4">
                 <button
                   onClick={resetForm}
-                  className="inline-flex items-center px-4 py-2 bg-white border border-green-300 text-green-700 rounded-md hover:bg-green-50 transition-colors"
+                  className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-green-300 dark:border-green-600 text-green-700 dark:text-green-400 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
                 >
                   Try Again
                 </button>
@@ -294,14 +294,14 @@ export function FormPreviewPage() {
 
       {/* Preview Notice */}
       {!submissionResult && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <div className="flex items-center">
             <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-blue-800 font-medium">Preview Mode</p>
-              <p className="text-blue-700 text-sm mt-1">
+              <p className="text-blue-800 dark:text-blue-300 font-medium">Preview Mode</p>
+              <p className="text-blue-700 dark:text-blue-400 text-sm mt-1">
                 This is how your form will appear to users. Submissions will be saved for testing purposes.
               </p>
             </div>
@@ -311,7 +311,7 @@ export function FormPreviewPage() {
 
       {/* Form Preview */}
       {schema && !submissionResult && (
-        <div key={schema.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div key={schema.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
           <DynamicFormGenerator
             schema={schema}
             onSubmit={handleFormSubmit}
@@ -323,33 +323,33 @@ export function FormPreviewPage() {
 
       {/* Form Info */}
       {schema && (
-        <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Form Information</h3>
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Form Information</h3>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">Form Title</dt>
-              <dd className="mt-1 text-sm text-gray-900 break-words">{schema.title}</dd>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Form Title</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white break-words">{schema.title}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Sections</dt>
-              <dd className="mt-1 text-sm text-gray-900">{schema.sections.length}</dd>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Sections</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white">{schema.sections.length}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Fields</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Fields</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white">
                 {schema.sections.reduce((acc, section) => acc + section.fields.length, 0)}
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Multi-Step</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Multi-Step</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white">
                 {schema.settings.multiStep ? 'Yes' : 'No'}
               </dd>
             </div>
             {schema.description && (
               <div className="col-span-2 sm:col-span-2 lg:col-span-4">
-                <dt className="text-sm font-medium text-gray-500">Description</dt>
-                <dd className="mt-1 text-sm text-gray-900 break-words">{schema.description}</dd>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
+                <dd className="mt-1 text-sm text-gray-900 dark:text-white break-words">{schema.description}</dd>
               </div>
             )}
           </div>

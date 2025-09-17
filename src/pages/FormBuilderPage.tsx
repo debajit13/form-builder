@@ -112,8 +112,8 @@ export function FormBuilderPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Form Builder</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Form Builder</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
               Create and manage your dynamic forms with our visual editor.
             </p>
           </div>
@@ -134,8 +134,8 @@ export function FormBuilderPage() {
             <svg className="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No forms yet</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No forms yet</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Get started by creating your first dynamic form.
             </p>
             <Link
@@ -179,10 +179,10 @@ export function FormBuilderPage() {
             </svg>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               {isCreating ? 'Create New Form' : 'Edit Form'}
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               {isCreating
                 ? 'Build your form using our drag-and-drop editor.'
                 : `Editing: ${currentSchema?.title || 'Untitled Form'}`
@@ -217,7 +217,7 @@ export function FormBuilderPage() {
       </div>
 
       {/* Form Builder */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <FormBuilder
           schema={currentSchema}
           onSave={handleSave}
@@ -238,15 +238,15 @@ function FormCard({ schema, onDelete }: FormCardProps) {
   const lastUpdated = new Date(schema.metadata.updatedAt).toLocaleDateString()
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 overflow-hidden">
       <div className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
               {schema.title}
             </h3>
             {schema.description && (
-              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
                 {schema.description}
               </p>
             )}
@@ -266,7 +266,7 @@ function FormCard({ schema, onDelete }: FormCardProps) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center text-sm text-gray-500 space-x-4">
+        <div className="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
           <span className="flex items-center">
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -281,12 +281,12 @@ function FormCard({ schema, onDelete }: FormCardProps) {
           </span>
         </div>
 
-        <div className="mt-4 text-xs text-gray-500">
+        <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
           Updated {lastUpdated}
         </div>
       </div>
 
-      <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+      <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <div className="flex space-x-2">
           <Link
             to={`/preview/form/${schema.id}`}
