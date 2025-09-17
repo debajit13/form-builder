@@ -172,22 +172,22 @@ describe('FormBuilder', () => {
     it('should render with existing schema', () => {
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      expect(screen.getByDisplayValue('Existing Form')).toBeInTheDocument()
-      expect(screen.getByDisplayValue('An existing form for testing')).toBeInTheDocument()
+      expect(screen.getAllByDisplayValue('Existing Form')[0]).toBeInTheDocument()
+      expect(screen.getAllByDisplayValue('An existing form for testing')[0]).toBeInTheDocument()
       expect(screen.getByTestId('section-editor-section-1')).toBeInTheDocument()
     })
 
     it('should render with new schema when no schema provided', () => {
       render(<FormBuilder onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      expect(screen.getByDisplayValue('New Form')).toBeInTheDocument()
-      expect(screen.getByDisplayValue('Description')).toBeInTheDocument()
+      expect(screen.getAllByDisplayValue('New Form')[0]).toBeInTheDocument()
+      expect(screen.getAllByDisplayValue('Description')[0]).toBeInTheDocument()
     })
 
     it('should start in builder tab by default', () => {
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const builderTab = screen.getByText('Builder')
+      const builderTab = screen.getAllByText('Builder')[0]
       expect(builderTab).toHaveClass('bg-white')
     })
   })
@@ -197,7 +197,7 @@ describe('FormBuilder', () => {
       const user = userEvent.setup()
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const titleInput = screen.getByDisplayValue('Existing Form')
+      const titleInput = screen.getAllByDisplayValue('Existing Form')[0]
       await user.clear(titleInput)
       await user.type(titleInput, 'Updated Form Title')
 
@@ -208,7 +208,7 @@ describe('FormBuilder', () => {
       const user = userEvent.setup()
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const descriptionInput = screen.getByDisplayValue('An existing form for testing')
+      const descriptionInput = screen.getAllByDisplayValue('An existing form for testing')[0]
       await user.clear(descriptionInput)
       await user.type(descriptionInput, 'Updated description')
 
@@ -324,7 +324,7 @@ describe('FormBuilder', () => {
       const user = userEvent.setup()
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const previewTab = screen.getByText('Preview')
+      const previewTab = screen.getAllByText('Preview')[0]
       await user.click(previewTab)
 
       expect(previewTab).toHaveClass('bg-white')
@@ -337,11 +337,11 @@ describe('FormBuilder', () => {
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
       // Switch to preview
-      const previewTab = screen.getByText('Preview')
+      const previewTab = screen.getAllByText('Preview')[0]
       await user.click(previewTab)
 
       // Switch back to builder
-      const builderTab = screen.getByText('Builder')
+      const builderTab = screen.getAllByText('Builder')[0]
       await user.click(builderTab)
 
       expect(builderTab).toHaveClass('bg-white')
@@ -427,7 +427,7 @@ describe('FormBuilder', () => {
       const user = userEvent.setup()
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const titleInput = screen.getByDisplayValue('Existing Form')
+      const titleInput = screen.getAllByDisplayValue('Existing Form')[0]
       await user.clear(titleInput)
       await user.type(titleInput, 'New Title')
 
@@ -440,10 +440,10 @@ describe('FormBuilder', () => {
     it('should have proper form structure', () => {
       render(<FormBuilder schema={mockSchema} onSave={mockOnSave} onCancel={mockOnCancel} />)
 
-      const titleInput = screen.getByDisplayValue('Existing Form')
+      const titleInput = screen.getAllByDisplayValue('Existing Form')[0]
       expect(titleInput).toHaveAttribute('placeholder', 'Form Title')
 
-      const descriptionInput = screen.getByDisplayValue('An existing form for testing')
+      const descriptionInput = screen.getAllByDisplayValue('An existing form for testing')[0]
       expect(descriptionInput).toHaveAttribute('placeholder', 'Form description (optional)')
     })
 

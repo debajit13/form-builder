@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { storage } from '../storage'
-import type { FormSchema, FormSubmission } from '../../types/schema'
+import type { FormSchema } from '../../types/schema'
+import type { FormSubmission } from '../../types/form'
 
 // Mock localStorage
 const localStorageMock = {
@@ -101,11 +102,15 @@ describe('Storage Utilities', () => {
     })
 
     it('should handle malformed JSON gracefully', () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       localStorageMock.getItem.mockReturnValue('invalid-json')
 
       const result = storage.getSchemas()
 
       expect(result).toEqual([])
+      expect(consoleSpy).toHaveBeenCalled()
+      consoleSpy.mockRestore()
     })
 
     it('should retrieve a specific schema by ID', () => {
@@ -154,6 +159,7 @@ describe('Storage Utilities', () => {
       id: 'sub-1',
       formId: 'form-1',
       data: { firstName: 'John', lastName: 'Doe' },
+      submittedAt: '2023-01-01T12:00:00.000Z',
       metadata: {
         submittedAt: '2023-01-01T12:00:00.000Z',
         userAgent: 'Test Browser',
@@ -224,6 +230,8 @@ describe('Storage Utilities', () => {
 
   describe('Error Handling', () => {
     it('should handle localStorage errors gracefully', () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       localStorageMock.getItem.mockImplementation(() => {
         throw new Error('Storage error')
       })
@@ -231,15 +239,25 @@ describe('Storage Utilities', () => {
       const result = storage.getSchemas()
 
       expect(result).toEqual([])
+      expect(consoleSpy).toHaveBeenCalled()
+      consoleSpy.mockRestore()
     })
 
     it('should throw error for invalid schema', () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
       expect(() => {
         storage.saveSchema(null as any)
-      }).toThrow()
+      }).toThrow('Failed to save schema')
+
+      consoleSpy.mockRestore()
     })
 
     it('should throw error for schema without ID', () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
       const baseSchema: FormSchema = {
         id: '',
         title: 'Test Form',
@@ -262,7 +280,9 @@ describe('Storage Utilities', () => {
 
       expect(() => {
         storage.saveSchema(baseSchema)
-      }).toThrow()
+      }).toThrow('Failed to save schema')
+
+      consoleSpy.mockRestore()
     })
   })
 })

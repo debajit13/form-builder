@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { useTheme, type Theme } from '../contexts/ThemeContext'
+import { useState } from 'react';
+import { useTheme } from '../hooks/useTheme';
+import type { Theme } from '../contexts/ThemeContext';
 
 interface ThemeToggleProps {
   variant?: 'button' | 'dropdown'

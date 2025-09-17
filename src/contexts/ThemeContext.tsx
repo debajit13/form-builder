@@ -1,28 +1,25 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useEffect, useState, type ReactNode } from 'react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { THEMES, STORAGE_KEYS } from '../utils/constants';
 
-export type Theme = 'light' | 'dark' | 'system'
+export type Theme = 'light' | 'dark' | 'system';
 
-interface ThemeContextType {
-  theme: Theme
-  actualTheme: 'light' | 'dark'
-  setTheme: (theme: Theme) => void
+export interface ThemeContextType {
+  theme: Theme;
+  actualTheme: 'light' | 'dark';
+  setTheme: (theme: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as Theme) || 'system'
-    }
-    return 'system'
-  })
+  const [theme, setThemeState] = useLocalStorage<Theme>(STORAGE_KEYS.THEME, THEMES.SYSTEM);
 
-  const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('light')
+  const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('light');
 
   // Update actualTheme when theme changes
   useEffect(() => {
@@ -66,9 +63,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [actualTheme])
 
   const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme)
-    localStorage.setItem('theme', newTheme)
-  }
+    setThemeState(newTheme);
+  };
 
   const value = {
     theme,
@@ -83,10 +79,3 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   )
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
-}

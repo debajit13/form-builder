@@ -264,11 +264,13 @@ describe('Form Workflows Integration', () => {
       render(<FormBuilder onSave={mockOnSave} onCancel={mockOnCancel} />)
 
       // Step 1: Update form title and description
-      const titleInput = screen.getByDisplayValue('New Form')
+      const titleInputs = screen.getAllByDisplayValue('New Form')
+      const titleInput = titleInputs[0] // Use the first one (works for both responsive layouts)
       await user.clear(titleInput)
       await user.type(titleInput, 'Customer Feedback Form')
 
-      const descriptionInput = screen.getByDisplayValue('Description')
+      const descriptionInputs = screen.getAllByDisplayValue('Description')
+      const descriptionInput = descriptionInputs[0] // Use the first one
       await user.clear(descriptionInput)
       await user.type(descriptionInput, 'Please provide your feedback')
 
@@ -297,14 +299,16 @@ describe('Form Workflows Integration', () => {
       await user.click(addSectionButton)
 
       // Step 5: Preview the form
-      const previewTab = screen.getByText('Preview')
+      const previewTabs = screen.getAllByText('Preview')
+      const previewTab = previewTabs[0] // Use the first one (works for both responsive layouts)
       await user.click(previewTab)
 
       expect(screen.getByTestId('schema-preview')).toBeInTheDocument()
       expect(screen.getByText('Preview: Customer Feedback Form')).toBeInTheDocument()
 
       // Step 6: Go back to builder and save
-      const builderTab = screen.getByText('Builder')
+      const builderTabs = screen.getAllByText('Builder')
+      const builderTab = builderTabs[0] // Use the first one (works for both responsive layouts)
       await user.click(builderTab)
 
       const saveButton = screen.getByText('Save Schema')
@@ -510,6 +514,8 @@ describe('Form Workflows Integration', () => {
 
   describe('Error Handling Workflows', () => {
     it('should handle form submission errors gracefully', async () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const user = userEvent.setup()
       const mockOnSubmit = vi.fn().mockRejectedValue(new Error('Submission failed'))
 
@@ -525,6 +531,8 @@ describe('Form Workflows Integration', () => {
         expect(screen.getByText('Error!')).toBeInTheDocument()
         expect(screen.getByText('Submission failed')).toBeInTheDocument()
       })
+
+      consoleSpy.mockRestore()
     })
 
     it('should handle form builder save errors gracefully', async () => {
@@ -557,7 +565,8 @@ describe('Form Workflows Integration', () => {
       )
 
       // Create a simple form
-      const titleInput = screen.getByDisplayValue('New Form')
+      const titleInputs = screen.getAllByDisplayValue('New Form')
+      const titleInput = titleInputs[0] // Use the first one (works for both responsive layouts)
       await user.clear(titleInput)
       await user.type(titleInput, 'Newsletter Signup')
 

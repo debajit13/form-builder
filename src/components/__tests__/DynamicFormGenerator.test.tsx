@@ -319,6 +319,8 @@ describe('DynamicFormGenerator', () => {
     })
 
     it('should handle submission errors gracefully', async () => {
+      // Mock console.error to avoid error logs in test output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const mockOnSubmit = vi.fn(() => Promise.reject(new Error('Submission failed')))
       const user = userEvent.setup()
 
@@ -330,6 +332,8 @@ describe('DynamicFormGenerator', () => {
       await waitFor(() => {
         expect(screen.getByText('Submission failed')).toBeInTheDocument()
       })
+
+      consoleSpy.mockRestore()
     })
   })
 

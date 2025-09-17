@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { SchemaValidator } from '../validation'
-import type { FieldSchema, TextFieldSchema, NumberFieldSchema, EmailFieldSchema } from '../../types/schema'
+import type { FieldSchema, TextFieldSchema, NumberFieldSchema } from '../../types/schema'
 
 describe('SchemaValidator', () => {
   describe('Text Field Validation', () => {
@@ -94,7 +94,7 @@ describe('SchemaValidator', () => {
   })
 
   describe('Email Field Validation', () => {
-    const emailField: EmailFieldSchema = {
+    const emailField: FieldSchema = {
       id: 'email-field',
       name: 'email',
       type: 'email',
@@ -115,7 +115,7 @@ describe('SchemaValidator', () => {
     })
 
     it('should handle optional email field', () => {
-      const optionalEmailField: EmailFieldSchema = {
+      const optionalEmailField: FieldSchema = {
         ...emailField,
         validation: { required: false }
       }
