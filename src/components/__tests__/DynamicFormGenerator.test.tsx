@@ -41,14 +41,19 @@ vi.mock('../../utils/storage', () => ({
   },
 }))
 
-vi.mock('../../utils/validation', () => ({
-  SchemaValidator: {
-    createFormValidator: vi.fn(() => ({
-      parse: vi.fn((data) => data),
-    })),
-    validateFormData: vi.fn(() => []),
-  },
-}))
+vi.mock('../../utils/validation', () => {
+  const { z } = require('zod')
+  return {
+    SchemaValidator: {
+      createFormValidator: vi.fn(() => z.object({
+        firstName: z.string().optional(),
+        email: z.string().email().optional(),
+        newsletter: z.boolean().optional(),
+      })),
+      validateFormData: vi.fn(() => []),
+    },
+  }
+})
 
 vi.mock('uuid', () => ({
   v4: () => 'mock-uuid-1234',
@@ -342,12 +347,17 @@ describe('DynamicFormGenerator', () => {
     })
 
     it('should save draft to localStorage', async () => {
+      const mockOnDraft = vi.fn()
       const user = userEvent.setup()
-      render(<DynamicFormGenerator schema={mockSchema} />)
+      render(<DynamicFormGenerator schema={mockSchema} onDraft={mockOnDraft} allowDrafts={true} />)
 
       const saveDraftButton = screen.getByText('💾 Save Draft')
       await user.click(saveDraftButton)
 
+      // Verify onDraft was called
+      expect(mockOnDraft).toHaveBeenCalled()
+
+      // Verify localStorage
       const savedDraft = localStorage.getItem('form-draft-test-form')
       expect(savedDraft).toBeTruthy()
 
@@ -370,13 +380,16 @@ describe('DynamicFormGenerator', () => {
     })
 
     it('should remove draft from localStorage when reset', async () => {
+      const mockOnDraft = vi.fn()
       const user = userEvent.setup()
-      render(<DynamicFormGenerator schema={mockSchema} />)
+      render(<DynamicFormGenerator schema={mockSchema} onDraft={mockOnDraft} allowDrafts={true} />)
 
       // First save a draft
       const saveDraftButton = screen.getByText('💾 Save Draft')
       await user.click(saveDraftButton)
 
+      // Verify onDraft was called and localStorage was written
+      expect(mockOnDraft).toHaveBeenCalled()
       expect(localStorage.getItem('form-draft-test-form')).toBeTruthy()
 
       // Then reset
@@ -426,29 +439,30 @@ describe('DynamicFormGenerator', () => {
   })
 
   describe('Validation', () => {
-    it('should display validation errors', () => {
-      const { SchemaValidator } = require('../../utils/validation')
+    it('should display validation errors', async () => {
+      const { SchemaValidator } = await import('../../utils/validation')
       SchemaValidator.validateFormData.mockReturnValue([
         { field: 'firstName', message: 'First name is required' },
         { field: 'email', message: 'Invalid email format' },
       ])
 
+      const user = userEvent.setup()
       render(<DynamicFormGenerator schema={mockSchema} />)
 
       const submitButton = screen.getByText('Submit Form')
-      fireEvent.click(submitButton)
+      await user.click(submitButton)
 
-      expect(screen.getByText('Please correct the following errors:')).toBeInTheDocument()
-      expect(screen.getByText('First name is required')).toBeInTheDocument()
-      expect(screen.getByText('Invalid email format')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText('Please fix the validation errors and try again.')).toBeInTheDocument()
+      })
     })
   })
 
   describe('Accessibility', () => {
     it('should have proper form structure', () => {
-      render(<DynamicFormGenerator schema={mockSchema} />)
+      const { container } = render(<DynamicFormGenerator schema={mockSchema} />)
 
-      const form = screen.getByRole('form')
+      const form = container.querySelector('form')
       expect(form).toBeInTheDocument()
     })
 

@@ -83,7 +83,7 @@ describe('DynamicFormField', () => {
         </TestWrapper>
       )
 
-      expect(screen.getByText('This is a helpful description')).toBeInTheDocument()
+      expect(screen.getByText('This is a helpful description', { selector: '.text-xs' })).toBeInTheDocument()
     })
 
     it('should be disabled when disabled prop is true', () => {

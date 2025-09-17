@@ -241,7 +241,7 @@ describe('useRealTimeValidation', () => {
   })
 
   describe('Event Handlers', () => {
-    it('should validate field on blur when validateOnBlur is true', async () => {
+    it('should validate field on blur when validateOnBlur is true and field is touched', async () => {
       const { SchemaValidator } = await import('../../utils/validation')
       const validateSpy = vi.fn().mockResolvedValue(null)
       SchemaValidator.validateFieldAsync = validateSpy
@@ -251,7 +251,7 @@ describe('useRealTimeValidation', () => {
           useRealTimeValidation({
             field: mockField,
             validateOnBlur: true,
-            validateOnChange: false, // Disable onChange to isolate onBlur
+            validateOnChange: true, // Enable onChange so field can be validated
           }),
         { wrapper: createWrapper() }
       )

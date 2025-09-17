@@ -13,14 +13,14 @@ describe('LoadingSpinner', () => {
   it('should render with custom text', () => {
     render(<LoadingSpinner text="Processing..." />)
 
-    expect(screen.getByText('Processing...')).toBeInTheDocument()
+    expect(screen.getByText('Processing...', { selector: 'p' })).toBeInTheDocument()
     expect(screen.getByLabelText('Processing...')).toBeInTheDocument()
   })
 
   it('should render inline variant', () => {
     render(<LoadingSpinner text="Loading data" inline={true} />)
 
-    const container = screen.getByText('Loading data').closest('span')
+    const container = screen.getByText('Loading data', { selector: 'span.text-sm' }).closest('span.inline-flex')
     expect(container).toHaveClass('inline-flex')
   })
 
@@ -58,16 +58,16 @@ describe('LoadingSpinner', () => {
     const spinner = screen.getByRole('status')
     expect(spinner).toHaveAttribute('aria-label', 'Loading content')
 
-    const srText = screen.getByText('Loading content')
+    const srText = screen.getByText('Loading content', { selector: '.sr-only' })
     expect(srText).toHaveClass('sr-only')
   })
 
   it('should show text alongside spinner when inline', () => {
     render(<LoadingSpinner text="Saving" inline={true} />)
 
-    const visibleText = screen.getByText('Saving')
+    const visibleText = screen.getByText('Saving', { selector: 'span.text-sm' })
     expect(visibleText).not.toHaveClass('sr-only')
-    expect(visibleText.closest('span')).toHaveClass('inline-flex')
+    expect(visibleText.closest('span.inline-flex')).toHaveClass('inline-flex')
   })
 })
 
@@ -166,11 +166,12 @@ describe('LoadingCard', () => {
 describe('Loading Components Accessibility', () => {
   it('should support reduced motion preferences', () => {
     // This would be tested with CSS media queries in a real browser environment
-    render(<LoadingSpinner />)
+    const { unmount } = render(<LoadingSpinner />)
 
     const spinner = screen.getByRole('status')
     expect(spinner).toHaveClass('animate-spin')
 
+    unmount()
     render(<LoadingSkeleton />)
 
     const skeleton = screen.getByRole('status')
@@ -198,7 +199,7 @@ describe('Loading Components Accessibility', () => {
     render(<LoadingSpinner text="Processing payment" />)
 
     // Screen reader text should be present but visually hidden
-    const srText = screen.getByText('Processing payment')
+    const srText = screen.getByText('Processing payment', { selector: '.sr-only' })
     expect(srText).toHaveClass('sr-only')
 
     // Status role should be properly set

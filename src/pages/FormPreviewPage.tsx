@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { DynamicFormGenerator } from '../components/DynamicFormGenerator'
 import { storage } from '../utils/storage'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -9,11 +9,22 @@ import { v4 as uuidv4 } from 'uuid'
 export function FormPreviewPage() {
   const { id } = useParams<{ id?: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const [schema, setSchema] = useState<FormSchema | null>(null)
   const [allSchemas, setAllSchemas] = useState<FormSchema[]>([])
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>(id || '')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Handle direct navigation to /preview/form without ID - redirect to /preview
+  const isPreviewFormRoute = location.pathname === '/preview/form'
+
+  useEffect(() => {
+    if (isPreviewFormRoute) {
+      navigate('/preview', { replace: true })
+      return
+    }
+  }, [isPreviewFormRoute, navigate])
   const [submissionResult, setSubmissionResult] = useState<{
     success: boolean
     message: string

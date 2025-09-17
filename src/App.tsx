@@ -23,6 +23,7 @@ function App() {
 
           {/* Form Preview Routes */}
           <Route path="preview" element={<FormPreviewPage />} />
+          <Route path="preview/form" element={<FormPreviewPage />} />
           <Route path="preview/form/:id" element={<FormPreviewPage />} />
 
           {/* Data Management Routes */}

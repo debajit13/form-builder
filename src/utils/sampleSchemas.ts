@@ -21,9 +21,9 @@ export const contactFormSchema: FormSchema = {
             required: true,
             minLength: 2,
             maxLength: 50,
-            message: 'First name must be between 2 and 50 characters'
+            message: 'First name must be between 2 and 50 characters',
           },
-          order: 1
+          order: 1,
         },
         {
           id: 'last-name',
@@ -34,9 +34,9 @@ export const contactFormSchema: FormSchema = {
           validation: {
             required: true,
             minLength: 2,
-            maxLength: 50
+            maxLength: 50,
           },
-          order: 2
+          order: 2,
         },
         {
           id: 'email',
@@ -47,9 +47,9 @@ export const contactFormSchema: FormSchema = {
           validation: {
             required: true,
             format: 'email',
-            message: 'Please enter a valid email address'
+            message: 'Please enter a valid email address',
           },
-          order: 3
+          order: 3,
         },
         {
           id: 'phone',
@@ -59,11 +59,11 @@ export const contactFormSchema: FormSchema = {
           placeholder: '+1 (555) 123-4567',
           validation: {
             pattern: '^\\+?[1-9]\\d{1,14}$',
-            message: 'Please enter a valid phone number'
+            message: 'Please enter a valid phone number',
           },
-          order: 4
-        }
-      ]
+          order: 4,
+        },
+      ],
     },
     {
       id: 'inquiry',
@@ -75,15 +75,15 @@ export const contactFormSchema: FormSchema = {
           type: 'select',
           label: 'Type of Inquiry',
           validation: {
-            required: true
+            required: true,
           },
           options: [
             { value: 'general', label: 'General Question' },
             { value: 'support', label: 'Technical Support' },
             { value: 'sales', label: 'Sales Inquiry' },
-            { value: 'partnership', label: 'Partnership' }
+            { value: 'partnership', label: 'Partnership' },
           ],
-          order: 5
+          order: 5,
         },
         {
           id: 'message',
@@ -96,9 +96,9 @@ export const contactFormSchema: FormSchema = {
           validation: {
             required: true,
             minLength: 10,
-            maxLength: 1000
+            maxLength: 1000,
           },
-          order: 6
+          order: 6,
         },
         {
           id: 'budget',
@@ -109,17 +109,17 @@ export const contactFormSchema: FormSchema = {
           prefix: '$',
           validation: {
             min: 100,
-            max: 1000000
+            max: 1000000,
           },
           conditional: {
             field: 'inquiryType',
             operator: 'equals',
-            value: 'sales'
+            value: 'sales',
           },
-          order: 7
-        }
-      ]
-    }
+          order: 7,
+        },
+      ],
+    },
   ],
   settings: {
     allowDrafts: true,
@@ -130,16 +130,16 @@ export const contactFormSchema: FormSchema = {
       primaryColor: '#3b82f6',
       fontSize: 'md',
       spacing: 'normal',
-      borderRadius: 'md'
-    }
+      borderRadius: 'md',
+    },
   },
   metadata: {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: '1.0.0',
     status: 'published',
-    category: 'contact'
-  }
+    category: 'contact',
+  },
 };
 
 export const userRegistrationSchema: FormSchema = {
@@ -163,9 +163,10 @@ export const userRegistrationSchema: FormSchema = {
             minLength: 3,
             maxLength: 20,
             pattern: '^[a-zA-Z0-9_]+$',
-            message: 'Username must contain only letters, numbers, and underscores'
+            message:
+              'Username must contain only letters, numbers, and underscores',
           },
-          order: 1
+          order: 1,
         },
         {
           id: 'email',
@@ -174,9 +175,9 @@ export const userRegistrationSchema: FormSchema = {
           label: 'Email',
           validation: {
             required: true,
-            format: 'email'
+            format: 'email',
           },
-          order: 2
+          order: 2,
         },
         {
           id: 'age',
@@ -187,11 +188,11 @@ export const userRegistrationSchema: FormSchema = {
             required: true,
             min: 13,
             max: 120,
-            integer: true
+            integer: true,
           },
-          order: 3
-        }
-      ]
+          order: 3,
+        },
+      ],
     },
     {
       id: 'preferences',
@@ -207,12 +208,12 @@ export const userRegistrationSchema: FormSchema = {
             { value: 'sports', label: 'Sports' },
             { value: 'music', label: 'Music' },
             { value: 'travel', label: 'Travel' },
-            { value: 'food', label: 'Food' }
+            { value: 'food', label: 'Food' },
           ],
           validation: {
-            required: false
+            required: false,
           },
-          order: 4
+          order: 4,
         },
         {
           id: 'newsletter',
@@ -220,9 +221,9 @@ export const userRegistrationSchema: FormSchema = {
           type: 'checkbox',
           label: 'Subscribe to Newsletter',
           validation: {
-            required: false
+            required: false,
           },
-          order: 5
+          order: 5,
         },
         {
           id: 'communication-preference',
@@ -233,15 +234,15 @@ export const userRegistrationSchema: FormSchema = {
             { value: 'email', label: 'Email' },
             { value: 'sms', label: 'SMS' },
             { value: 'phone', label: 'Phone Call' },
-            { value: 'none', label: 'No Communication' }
+            { value: 'none', label: 'No Communication' },
           ],
           validation: {
-            required: true
+            required: true,
           },
-          order: 6
-        }
-      ]
-    }
+          order: 6,
+        },
+      ],
+    },
   ],
   settings: {
     allowDrafts: true,
@@ -252,16 +253,16 @@ export const userRegistrationSchema: FormSchema = {
       primaryColor: '#059669',
       fontSize: 'md',
       spacing: 'normal',
-      borderRadius: 'lg'
-    }
+      borderRadius: 'lg',
+    },
   },
   metadata: {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: '1.0.0',
     status: 'published',
-    category: 'registration'
-  }
+    category: 'registration',
+  },
 };
 
 export const eventRegistrationSchema: FormSchema = {
@@ -281,9 +282,9 @@ export const eventRegistrationSchema: FormSchema = {
           label: 'Full Name',
           validation: {
             required: true,
-            minLength: 2
+            minLength: 2,
           },
-          order: 1
+          order: 1,
         },
         {
           id: 'company',
@@ -291,9 +292,9 @@ export const eventRegistrationSchema: FormSchema = {
           type: 'text',
           label: 'Company',
           validation: {
-            required: false
+            required: false,
           },
-          order: 2
+          order: 2,
         },
         {
           id: 'registration-date',
@@ -303,11 +304,13 @@ export const eventRegistrationSchema: FormSchema = {
           validation: {
             required: true,
             minDate: new Date().toISOString().split('T')[0],
-            maxDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            maxDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split('T')[0],
           },
-          order: 3
-        }
-      ]
+          order: 3,
+        },
+      ],
     },
     {
       id: 'event-details',
@@ -321,12 +324,12 @@ export const eventRegistrationSchema: FormSchema = {
           options: [
             { value: 'standard', label: 'Standard - $50' },
             { value: 'premium', label: 'Premium - $100' },
-            { value: 'vip', label: 'VIP - $200' }
+            { value: 'vip', label: 'VIP - $200' },
           ],
           validation: {
-            required: true
+            required: true,
           },
-          order: 4
+          order: 4,
         },
         {
           id: 'dietary-restrictions',
@@ -338,12 +341,12 @@ export const eventRegistrationSchema: FormSchema = {
           rows: 3,
           validation: {
             required: false,
-            maxLength: 500
+            maxLength: 500,
           },
-          order: 5
-        }
-      ]
-    }
+          order: 5,
+        },
+      ],
+    },
   ],
   settings: {
     allowDrafts: true,
@@ -353,20 +356,20 @@ export const eventRegistrationSchema: FormSchema = {
       primaryColor: '#7c3aed',
       fontSize: 'md',
       spacing: 'relaxed',
-      borderRadius: 'lg'
-    }
+      borderRadius: 'lg',
+    },
   },
   metadata: {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: '1.0.0',
     status: 'published',
-    category: 'event'
-  }
+    category: 'event',
+  },
 };
 
 export const sampleSchemas = {
   contact: contactFormSchema,
   registration: userRegistrationSchema,
-  event: eventRegistrationSchema
+  event: eventRegistrationSchema,
 };

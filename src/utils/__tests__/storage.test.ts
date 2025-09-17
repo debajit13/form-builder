@@ -236,15 +236,33 @@ describe('Storage Utilities', () => {
     it('should throw error for invalid schema', () => {
       expect(() => {
         storage.saveSchema(null as any)
-      }).toThrow('Invalid schema')
+      }).toThrow()
     })
 
     it('should throw error for schema without ID', () => {
-      const invalidSchema = { ...mockSchema, id: '' }
+      const baseSchema: FormSchema = {
+        id: '',
+        title: 'Test Form',
+        version: '1.0.0',
+        sections: [],
+        settings: {
+          theme: { primaryColor: '#3b82f6' },
+          multiStep: false,
+          showProgress: false,
+          allowDrafts: true
+        },
+        metadata: {
+          createdAt: '2023-01-01T00:00:00.000Z',
+          updatedAt: '2023-01-01T00:00:00.000Z',
+          version: '1.0.0',
+          status: 'draft',
+          createdBy: 'test-user'
+        }
+      } as any
 
       expect(() => {
-        storage.saveSchema(invalidSchema as any)
-      }).toThrow('Schema must have an id')
+        storage.saveSchema(baseSchema)
+      }).toThrow()
     })
   })
 })

@@ -17,6 +17,14 @@ const routeNames: Record<string, string> = {
   '/data/analytics': 'Analytics'
 }
 
+// Routes that should redirect to parent when clicked
+const redirectToParent: Record<string, string> = {
+  '/preview/form': '/preview',
+  '/builder/edit': '/builder',
+  '/builder/new': '/builder',
+  '/data/submissions': '/data'
+}
+
 export function Breadcrumbs() {
   const location = useLocation()
 
@@ -41,7 +49,7 @@ export function Breadcrumbs() {
 
       breadcrumbs.push({
         name: routeName,
-        href: isLast ? undefined : currentPath
+        href: isLast ? undefined : (redirectToParent[currentPath] || currentPath)
       })
     })
 

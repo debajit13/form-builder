@@ -11,21 +11,29 @@ describe('SchemaHelpers', () => {
   describe('SchemaBuilder', () => {
     it('should create a new schema with default values', () => {
       const builder = new SchemaBuilder('Test Form')
+      builder.addSection('Test Section').addTextField('test', 'Test Field')
       const schema = builder.build()
 
       expect(schema).toMatchObject({
         id: 'mock-uuid-1234',
         title: 'Test Form',
         version: '1.0.0',
-        sections: [],
+        sections: expect.arrayContaining([expect.objectContaining({
+          title: 'Test Section'
+        })]),
         settings: {
-          theme: {
-            primaryColor: '#3b82f6',
-            secondaryColor: '#1d4ed8'
-          },
+          allowDrafts: false,
+          requireAuth: false,
           multiStep: false,
           showProgress: false,
-          allowDrafts: true
+          submitButtonText: 'Submit',
+          resetButtonText: 'Reset',
+          theme: {
+            primaryColor: '#3b82f6',
+            fontSize: 'md',
+            spacing: 'normal',
+            borderRadius: 'md'
+          }
         }
       })
 
@@ -37,6 +45,7 @@ describe('SchemaHelpers', () => {
 
     it('should create schema with custom description', () => {
       const builder = new SchemaBuilder('Test Form', 'A test form description')
+      builder.addSection('Test Section').addTextField('test', 'Test Field')
       const schema = builder.build()
 
       expect(schema.description).toBe('A test form description')
@@ -73,13 +82,14 @@ describe('SchemaHelpers', () => {
 
     it('should set custom settings', () => {
       const builder = new SchemaBuilder('Test Form')
+      builder.addSection('Test Section').addTextField('test', 'Test Field')
 
       builder.setSettings({
         multiStep: true,
         showProgress: true,
         theme: {
           primaryColor: '#ff0000',
-          secondaryColor: '#00ff00'
+          fontSize: 'lg'
         }
       })
 
@@ -88,16 +98,17 @@ describe('SchemaHelpers', () => {
       expect(schema.settings).toMatchObject({
         multiStep: true,
         showProgress: true,
-        allowDrafts: true,
+        allowDrafts: false,
         theme: {
           primaryColor: '#ff0000',
-          secondaryColor: '#00ff00'
+          fontSize: 'lg'
         }
       })
     })
 
     it('should set custom metadata', () => {
       const builder = new SchemaBuilder('Test Form')
+      builder.addSection('Test Section').addTextField('test', 'Test Field')
 
       builder.setMetadata({
         createdBy: 'test-user',
@@ -206,7 +217,7 @@ describe('SchemaHelpers', () => {
     })
 
     it('should add textarea field to section', () => {
-      sectionBuilder.addTextareaField('message', 'Message', {
+      sectionBuilder.addTextAreaField('message', 'Message', {
         rows: 5,
         placeholder: 'Enter your message...',
         validation: { required: true, maxLength: 500 }
@@ -305,27 +316,34 @@ describe('SchemaHelpers', () => {
 
   describe('Integration Tests', () => {
     it('should create a complete form schema', () => {
-      const schema = new SchemaBuilder('Contact Form', 'A simple contact form')
-        .addSection('Personal Information')
-          .addTextField('firstName', 'First Name', { validation: { required: true } })
-          .addTextField('lastName', 'Last Name', { validation: { required: true } })
-          .addEmailField('email', 'Email Address', { validation: { required: true } })
-          .addNumberField('age', 'Age', { validation: { min: 18 } })
-        .addSection('Contact Details')
-          .addSelectField('country', 'Country', [
-            { value: 'us', label: 'United States' },
-            { value: 'ca', label: 'Canada' }
-          ])
-          .addTextareaField('message', 'Message', {
-            rows: 4,
-            validation: { required: true, maxLength: 500 }
-          })
-        .setSettings({
-          multiStep: true,
-          showProgress: true,
-          theme: { primaryColor: '#007bff' }
+      const builder = new SchemaBuilder('Contact Form', 'A simple contact form')
+
+      // Add first section
+      builder.addSection('Personal Information')
+        .addTextField('firstName', 'First Name', { validation: { required: true } })
+        .addTextField('lastName', 'Last Name', { validation: { required: true } })
+        .addEmailField('email', 'Email Address', { validation: { required: true } })
+        .addNumberField('age', 'Age', { validation: { min: 18 } })
+
+      // Add second section
+      builder.addSection('Contact Details')
+        .addSelectField('country', 'Country', [
+          { value: 'us', label: 'United States' },
+          { value: 'ca', label: 'Canada' }
+        ])
+        .addTextAreaField('message', 'Message', {
+          rows: 4,
+          validation: { required: true, maxLength: 500 }
         })
-        .build()
+
+      // Set settings and build
+      builder.setSettings({
+        multiStep: true,
+        showProgress: true,
+        theme: { primaryColor: '#007bff' }
+      })
+
+      const schema = builder.build()
 
       expect(schema.title).toBe('Contact Form')
       expect(schema.description).toBe('A simple contact form')
@@ -349,22 +367,27 @@ describe('SchemaHelpers', () => {
     })
 
     it('should handle empty sections', () => {
-      const schema = new SchemaBuilder('Empty Form')
-        .addSection('Empty Section')
-        .build()
+      const builder = new SchemaBuilder('Empty Form')
+      builder.addSection('Empty Section')
+      const schema = builder.build()
 
       expect(schema.sections).toHaveLength(1)
       expect(schema.sections[0].fields).toHaveLength(0)
     })
 
     it('should generate unique IDs for all elements', () => {
-      const schema = new SchemaBuilder('Test Form')
-        .addSection('Section 1')
-          .addTextField('field1', 'Field 1')
-          .addTextField('field2', 'Field 2')
-        .addSection('Section 2')
-          .addTextField('field3', 'Field 3')
-        .build()
+      const builder = new SchemaBuilder('Test Form')
+
+      // Add first section with fields
+      builder.addSection('Section 1')
+        .addTextField('field1', 'Field 1')
+        .addTextField('field2', 'Field 2')
+
+      // Add second section with field
+      builder.addSection('Section 2')
+        .addTextField('field3', 'Field 3')
+
+      const schema = builder.build()
 
       const allIds = [
         schema.id,

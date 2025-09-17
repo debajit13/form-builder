@@ -41,11 +41,11 @@ export function FormProgressIndicator({
     } else {
       switch (status) {
         case 'completed':
-          return `${baseClasses} bg-green-500 border-green-500 text-white`;
+          return `${baseClasses} bg-green-500 border-green-500 text-white shadow-lg`;
         case 'current':
-          return `${baseClasses} bg-white border-white text-blue-600 ring-4 ring-blue-200`;
+          return `${baseClasses} bg-white border-white text-blue-600 ring-4 ring-white/30 shadow-lg`;
         case 'upcoming':
-          return `${baseClasses} bg-blue-500 border-blue-300 text-blue-100`;
+          return `${baseClasses} bg-white/20 border-white/40 text-white backdrop-blur-sm`;
       }
     }
   };
@@ -63,7 +63,7 @@ export function FormProgressIndicator({
 
   const getLabelClasses = (stepIndex: number) => {
     const status = getStepStatus(stepIndex);
-    const baseClasses = 'text-sm font-medium transition-colors duration-200';
+    const baseClasses = 'text-sm font-semibold transition-colors duration-200 drop-shadow-sm';
 
     if (variant === 'light') {
       switch (status) {
@@ -77,11 +77,11 @@ export function FormProgressIndicator({
     } else {
       switch (status) {
         case 'completed':
-          return `${baseClasses} text-green-200`;
+          return `${baseClasses} text-gray-900 font-bold`;
         case 'current':
-          return `${baseClasses} text-white`;
+          return `${baseClasses} text-gray-900 font-bold`;
         case 'upcoming':
-          return `${baseClasses} text-blue-200`;
+          return `${baseClasses} text-gray-800 font-semibold`;
       }
     }
   };
@@ -136,7 +136,7 @@ export function FormProgressIndicator({
             {showFieldCount && (
               <div
                 className={`text-xs mt-1 ${
-                  variant === 'light' ? 'text-gray-500' : 'text-blue-200'
+                  variant === 'light' ? 'text-gray-500' : 'text-gray-800 font-semibold'
                 }`}
               >
                 {step.fields} field{step.fields !== 1 ? 's' : ''}
@@ -148,21 +148,21 @@ export function FormProgressIndicator({
 
       {/* Progress Percentage */}
       <div className="mt-4 flex items-center justify-between text-sm">
-        <span className={variant === 'light' ? 'text-gray-600' : 'text-blue-200'}>
+        <span className={variant === 'light' ? 'text-gray-600' : 'text-gray-900 font-bold'}>
           Step {currentStep + 1} of {steps.length}
         </span>
-        <span className={variant === 'light' ? 'text-gray-600' : 'text-blue-200'}>
+        <span className={variant === 'light' ? 'text-gray-600' : 'text-gray-900 font-bold'}>
           {Math.round(((currentStep + 1) / steps.length) * 100)}% complete
         </span>
       </div>
 
       {/* Progress Bar Track */}
-      <div className={`mt-2 w-full rounded-full h-2 ${variant === 'light' ? 'bg-gray-200' : 'bg-blue-300'}`}>
+      <div className={`mt-2 w-full rounded-full h-2 ${variant === 'light' ? 'bg-gray-200' : 'bg-white/20 backdrop-blur-sm'}`}>
         <div
-          className="h-2 rounded-full transition-all duration-300 ease-out"
+          className="h-2 rounded-full transition-all duration-300 ease-out shadow-sm"
           style={{
             width: `${((currentStep + 1) / steps.length) * 100}%`,
-            backgroundColor: variant === 'light' ? '#059669' : '#10b981'
+            backgroundColor: variant === 'light' ? '#059669' : '#ffffff'
           }}
         />
       </div>
