@@ -415,4 +415,143 @@ export class DataManager {
     // Import backup data
     return this.importData(backupData);
   }
+
+  // Individual schema export/import functions
+  static exportSchema(schemaId: string): string {
+    const schemas = storage.getSchemas();
+    const schema = schemas.find(s => s.id === schemaId);
+
+    if (!schema) {
+      throw new Error('Schema not found');
+    }
+
+    const exportData = {
+      schema,
+      exportedAt: new Date().toISOString(),
+      metadata: {
+        version: '1.0.0',
+        type: 'single-schema',
+        schemaId: schema.id,
+        schemaTitle: schema.title
+      }
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  }
+
+  static async importSchema(jsonData: string, options: {
+    overwrite?: boolean;
+    generateNewId?: boolean;
+    renameIfExists?: boolean;
+  } = {}): Promise<{ success: boolean; errors: string[]; importedSchema?: FormSchema }> {
+    const result = {
+      success: false,
+      errors: [] as string[],
+      importedSchema: undefined as FormSchema | undefined
+    };
+
+    try {
+      const data = JSON.parse(jsonData);
+
+      // Validate import data structure
+      if (!data.schema) {
+        result.errors.push('Invalid import file: no schema data found');
+        return result;
+      }
+
+      let schemaToImport = data.schema;
+
+      // Validate schema structure
+      const validation = this.validateSchema(schemaToImport);
+      if (!validation.isValid) {
+        result.errors.push(`Invalid schema: ${validation.errors.join(', ')}`);
+        return result;
+      }
+
+      const existingSchemas = storage.getSchemas();
+      const existingSchema = existingSchemas.find(s => s.id === schemaToImport.id);
+
+      if (existingSchema) {
+        if (options.overwrite) {
+          // Replace existing schema
+          const updatedSchemas = existingSchemas.map(s =>
+            s.id === schemaToImport.id ? schemaToImport : s
+          );
+          storage.saveSchemas(updatedSchemas);
+          result.importedSchema = schemaToImport;
+        } else if (options.generateNewId) {
+          // Generate new ID and import as new schema
+          schemaToImport = {
+            ...schemaToImport,
+            id: `${schemaToImport.id}-${Date.now()}`,
+            metadata: {
+              ...schemaToImport.metadata,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          };
+          storage.saveSchemas([...existingSchemas, schemaToImport]);
+          result.importedSchema = schemaToImport;
+        } else if (options.renameIfExists) {
+          // Rename and import as new schema
+          let counter = 1;
+          let newTitle = `${schemaToImport.title} (Copy)`;
+
+          while (existingSchemas.some(s => s.title === newTitle)) {
+            counter++;
+            newTitle = `${schemaToImport.title} (Copy ${counter})`;
+          }
+
+          schemaToImport = {
+            ...schemaToImport,
+            id: `${schemaToImport.id}-copy-${Date.now()}`,
+            title: newTitle,
+            metadata: {
+              ...schemaToImport.metadata,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          };
+          storage.saveSchemas([...existingSchemas, schemaToImport]);
+          result.importedSchema = schemaToImport;
+        } else {
+          result.errors.push(`Schema with ID "${schemaToImport.id}" already exists. Choose overwrite or generate new ID option.`);
+          return result;
+        }
+      } else {
+        // Import new schema
+        storage.saveSchemas([...existingSchemas, schemaToImport]);
+        result.importedSchema = schemaToImport;
+      }
+
+      result.success = true;
+      return result;
+
+    } catch (error) {
+      result.errors.push(`Failed to parse import data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      return result;
+    }
+  }
+
+  static exportSchemas(schemaIds: string[]): string {
+    const schemas = storage.getSchemas();
+    const selectedSchemas = schemas.filter(s => schemaIds.includes(s.id));
+
+    if (selectedSchemas.length === 0) {
+      throw new Error('No schemas found with the provided IDs');
+    }
+
+    const exportData = {
+      schemas: selectedSchemas,
+      exportedAt: new Date().toISOString(),
+      metadata: {
+        version: '1.0.0',
+        type: 'multiple-schemas',
+        totalSchemas: selectedSchemas.length,
+        schemaIds: schemaIds
+      }
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  }
 }
