@@ -313,13 +313,13 @@ describe('SchemaValidator', () => {
       try {
         validator.parse('')
       } catch (error: unknown) {
-        expect(error.issues[0].message).toContain('at least 5')
+        expect((error as any).issues[0].message).toContain('at least 5')
       }
 
       try {
         validator.parse('abc')
       } catch (error: unknown) {
-        expect(error.issues[0].message).toContain('at least 5')
+        expect((error as any).issues[0].message).toContain('at least 5')
       }
     })
   })

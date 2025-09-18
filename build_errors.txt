@@ -1,0 +1,46 @@
+
+> dynamic-form-builder@0.0.0 build
+> tsc -b && vite build
+
+src/hooks/useSubmissionManager.tsx(177,5): error TS2322: Type '(formId?: string) => { submissions: FormSubmission[]; exportedAt: string; formId: string; count: number; }' is not assignable to type '(formId?: string) => FormSubmission[]'.
+  Type '{ submissions: FormSubmission[]; exportedAt: string; formId: string; count: number; }' is missing the following properties from type 'FormSubmission[]': length, pop, push, concat, and 29 more.
+src/pages/DataManagementPage.tsx(65,60): error TS2339: Property 'submittedAt' does not exist on type 'FormSubmission'.
+src/pages/DataManagementPage.tsx(65,163): error TS2339: Property 'submittedAt' does not exist on type 'FormSubmission'.
+src/pages/DataManagementPage.tsx(395,70): error TS2339: Property 'submittedAt' does not exist on type 'FormSubmission'.
+src/pages/DataManagementPage.tsx(520,68): error TS2339: Property 'submittedAt' does not exist on type 'FormSubmission'.
+src/pages/SubmissionDetailsPage.tsx(191,56): error TS2339: Property 'submittedAt' does not exist on type 'FormSubmission'.
+src/utils/__tests__/schemaHelpers.test.ts(259,9): error TS2353: Object literal may only specify known properties, and 'validation' does not exist in type 'SelectOption[]'.
+src/utils/__tests__/storage.test.ts(162,7): error TS2353: Object literal may only specify known properties, and 'submittedAt' does not exist in type 'FormSubmission'.
+src/utils/__tests__/storage.test.ts(261,13): error TS2739: Type 'FormSubmission' is missing the following properties from type 'FormSchema': title, version, sections, settings
+src/utils/__tests__/storage.test.ts(261,38): error TS2352: Conversion of type '{ id: string; title: string; version: string; sections: undefined[]; settings: { theme: { primaryColor: string; }; multiStep: boolean; showProgress: boolean; allowDrafts: boolean; }; metadata: { createdAt: string; updatedAt: string; version: string; status: string; createdBy: string; }; }' to type 'FormSubmission' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ id: string; title: string; version: string; sections: undefined[]; settings: { theme: { primaryColor: string; }; multiStep: boolean; showProgress: boolean; allowDrafts: boolean; }; metadata: { createdAt: string; updatedAt: string; version: string; status: string; createdBy: string; }; }' is missing the following properties from type 'FormSubmission': formId, data, status
+src/utils/__tests__/validation.test.ts(316,22): error TS2339: Property 'issues' does not exist on type 'unknown'.
+src/utils/__tests__/validation.test.ts(322,22): error TS2339: Property 'issues' does not exist on type 'unknown'.
+src/utils/dataManager.ts(34,17): error TS2339: Property 'id' does not exist on type 'object'.
+src/utils/dataManager.ts(34,37): error TS2339: Property 'id' does not exist on type 'object'.
+src/utils/dataManager.ts(38,17): error TS2339: Property 'title' does not exist on type 'object'.
+src/utils/dataManager.ts(38,40): error TS2339: Property 'title' does not exist on type 'object'.
+src/utils/dataManager.ts(42,17): error TS2339: Property 'sections' does not exist on type 'object'.
+src/utils/dataManager.ts(42,51): error TS2339: Property 'sections' does not exist on type 'object'.
+src/utils/dataManager.ts(44,23): error TS2339: Property 'sections' does not exist on type 'object'.
+src/utils/dataManager.ts(50,20): error TS2339: Property 'id' does not exist on type 'unknown'.
+src/utils/dataManager.ts(50,41): error TS2339: Property 'id' does not exist on type 'unknown'.
+src/utils/dataManager.ts(54,20): error TS2339: Property 'title' does not exist on type 'unknown'.
+src/utils/dataManager.ts(54,44): error TS2339: Property 'title' does not exist on type 'unknown'.
+src/utils/dataManager.ts(58,20): error TS2339: Property 'fields' does not exist on type 'unknown'.
+src/utils/dataManager.ts(58,53): error TS2339: Property 'fields' does not exist on type 'unknown'.
+src/utils/dataManager.ts(62,22): error TS2339: Property 'id' does not exist on type 'unknown'.
+src/utils/dataManager.ts(62,41): error TS2339: Property 'id' does not exist on type 'unknown'.
+src/utils/dataManager.ts(66,22): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/utils/dataManager.ts(66,43): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/utils/dataManager.ts(70,22): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/utils/dataManager.ts(70,43): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/utils/dataManager.ts(90,21): error TS2339: Property 'id' does not exist on type 'object'.
+src/utils/dataManager.ts(90,45): error TS2339: Property 'id' does not exist on type 'object'.
+src/utils/dataManager.ts(94,21): error TS2339: Property 'formId' does not exist on type 'object'.
+src/utils/dataManager.ts(94,49): error TS2339: Property 'formId' does not exist on type 'object'.
+src/utils/dataManager.ts(98,21): error TS2339: Property 'data' does not exist on type 'object'.
+src/utils/dataManager.ts(98,47): error TS2339: Property 'data' does not exist on type 'object'.
+src/utils/dataManager.ts(102,21): error TS2339: Property 'metadata' does not exist on type 'object'.
+src/utils/dataManager.ts(102,51): error TS2339: Property 'metadata' does not exist on type 'object'.
+src/utils/dataManager.ts(105,23): error TS2339: Property 'metadata' does not exist on type 'object'.

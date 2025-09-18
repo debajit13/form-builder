@@ -1,4 +1,5 @@
-import type { FormData, FormSubmission } from '../types/form';
+import type { FormData } from '../types/form';
+import type { FormSubmission } from '../types/schema';
 import type { FormSchema } from '../types/schema';
 
 const FORMS_KEY = 'dynamic-forms';

@@ -82,7 +82,7 @@ export function DynamicFormField({
             placeholder={field.placeholder}
             disabled={field.disabled}
             readOnly={field.readonly}
-            defaultValue={field.defaultValue}
+            defaultValue={field.defaultValue as string}
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
@@ -122,7 +122,7 @@ export function DynamicFormField({
               placeholder={field.placeholder}
               disabled={field.disabled}
               readOnly={field.readonly}
-              defaultValue={field.defaultValue}
+              defaultValue={field.defaultValue as string}
               min={field.validation?.min}
               max={field.validation?.max}
               step={(field.validation as { step?: string | number })?.step || 'any'}
@@ -158,7 +158,7 @@ export function DynamicFormField({
             {...register(field.name)}
             disabled={field.disabled}
             readOnly={field.readonly}
-            defaultValue={field.defaultValue}
+            defaultValue={field.defaultValue as string}
             min={(field.validation as { minDate?: string })?.minDate}
             max={(field.validation as { maxDate?: string })?.maxDate}
             onBlur={handlers.onBlur}
@@ -187,7 +187,7 @@ export function DynamicFormField({
             placeholder={field.placeholder}
             disabled={field.disabled}
             readOnly={field.readonly}
-            defaultValue={field.defaultValue}
+            defaultValue={field.defaultValue as string}
             rows={textareaField.rows || 3}
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()} resize-vertical`}
@@ -251,7 +251,7 @@ export function DynamicFormField({
             id={field.name}
             {...register(field.name)}
             disabled={field.disabled}
-            defaultValue={field.defaultValue || ''}
+            defaultValue={(field.defaultValue as string) || ''}
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
@@ -383,7 +383,7 @@ export function DynamicFormField({
               type='checkbox'
               {...register(field.name)}
               disabled={field.disabled}
-              defaultChecked={field.defaultValue}
+              defaultChecked={field.defaultValue as boolean}
               className='text-blue-600 focus:ring-blue-500 h-4 w-4 rounded'
               style={{
                 accentColor: theme?.primaryColor || '#3b82f6',
@@ -416,7 +416,7 @@ export function DynamicFormField({
             placeholder={defaultField.placeholder}
             disabled={defaultField.disabled}
             readOnly={defaultField.readonly}
-            defaultValue={defaultField.defaultValue}
+            defaultValue={defaultField.defaultValue as string}
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{

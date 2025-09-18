@@ -91,8 +91,8 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
         bValue = bSchema?.title || b.formId;
       } else {
         // Sort by submission data field
-        aValue = a.data[sortConfig.field] || '';
-        bValue = b.data[sortConfig.field] || '';
+        aValue = (a.data[sortConfig.field] as string | number | Date) || '';
+        bValue = (b.data[sortConfig.field] as string | number | Date) || '';
       }
 
       if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;

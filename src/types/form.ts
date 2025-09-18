@@ -26,7 +26,8 @@ export interface FormData {
   updatedAt: Date;
 }
 
-export interface FormSubmission {
+// Legacy FormSubmission - deprecated, use FormSubmission from schema.ts
+export interface LegacyFormSubmission {
   id: string;
   formId: string;
   data: Record<string, unknown>;
@@ -42,5 +43,6 @@ export type {
   FormMetadata,
   FieldType,
   ValidationError,
-  FormSubmissionData
+  FormSubmissionData,
+  FormSubmission
 } from './schema';

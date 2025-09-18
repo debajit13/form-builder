@@ -188,7 +188,7 @@ export function SubmissionDetailsPage() {
           <div>
             <dt className="text-sm font-medium text-gray-500">Submitted At</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
+              {new Date(submission.metadata.submittedAt).toLocaleString()}
             </dd>
           </div>
           <div>

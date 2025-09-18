@@ -247,7 +247,7 @@ export function populateSampleData() {
     const existingSubmissions = storage.getSubmissions();
     if (existingSubmissions.length === 0) {
       const sampleSubmissions = generateSampleSubmissions();
-      storage.saveSubmissions(sampleSubmissions as FormSubmission[]);
+      storage.saveSubmissions(sampleSubmissions);
       console.log(`Generated ${sampleSubmissions.length} sample submissions`);
     }
 

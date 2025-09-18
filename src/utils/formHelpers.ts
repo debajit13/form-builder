@@ -17,25 +17,25 @@ export const extractErrorMessage = (error: unknown): string => {
   }
 
   // Standard React Hook Form error with string message
-  if (error.message && typeof error.message === 'string') {
-    return error.message;
+  if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
+    return (error as any).message;
   }
 
   // Handle complex error objects where message is nested
-  if (error.message && typeof error.message === 'object') {
+  if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'object') {
     // React Hook Form + Zod can create nested message structures
-    if (error.message.message && typeof error.message.message === 'string') {
-      return error.message.message;
+    if ((error as any).message && 'message' in (error as any).message && typeof (error as any).message.message === 'string') {
+      return (error as any).message.message;
     }
 
     // Sometimes the message is in a different property
-    if (error.message.text && typeof error.message.text === 'string') {
-      return error.message.text;
+    if ('text' in (error as any).message && typeof (error as any).message.text === 'string') {
+      return (error as any).message.text;
     }
 
     // Zod error array structure
-    if (Array.isArray(error.message) && error.message.length > 0) {
-      const firstIssue = error.message[0];
+    if (Array.isArray((error as any).message) && (error as any).message.length > 0) {
+      const firstIssue = (error as any).message[0];
       if (firstIssue && typeof firstIssue.message === 'string') {
         return firstIssue.message;
       }
@@ -43,7 +43,7 @@ export const extractErrorMessage = (error: unknown): string => {
   }
 
   // Fallback for unknown error structures
-  if (error.type) {
+  if (error && typeof error === 'object' && 'type' in error) {
     const typeToMessageMap: Record<string, string> = {
       required: VALIDATION_MESSAGES.REQUIRED,
       email: VALIDATION_MESSAGES.INVALID_EMAIL,
@@ -54,7 +54,7 @@ export const extractErrorMessage = (error: unknown): string => {
       max: 'Value is too large',
     };
 
-    return typeToMessageMap[error.type] || 'Invalid value';
+    return typeToMessageMap[(error as any).type] || 'Invalid value';
   }
 
   return 'Invalid value';
@@ -96,7 +96,7 @@ export const deepClone = <T>(obj: T): T => {
         clonedObj[key] = deepClone(obj[key]);
       }
     }
-    return clonedObj;
+    return clonedObj as T;
   }
   return obj;
 };

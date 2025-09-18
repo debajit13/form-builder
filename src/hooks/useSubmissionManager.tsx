@@ -15,7 +15,12 @@ interface SubmissionManagerContextType {
   deleteSubmission: (id: string) => Promise<void>;
   clearSubmissions: (formId?: string) => Promise<void>;
   loadSubmissions: () => Promise<void>;
-  exportSubmissions: (formId?: string) => FormSubmission[];
+  exportSubmissions: (formId?: string) => {
+    submissions: FormSubmission[];
+    exportedAt: string;
+    formId?: string;
+    count: number;
+  };
   getSubmissionStats: (formId: string) => {
     total: number;
     today: number;
@@ -37,7 +42,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       setError(null);
 
       const loadedSubmissions = storage.getSubmissions();
-      setSubmissions(loadedSubmissions as FormSubmission[]);
+      setSubmissions(loadedSubmissions);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load submissions';
       setError(errorMessage);
@@ -69,10 +74,10 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
         validationErrors: []
       };
 
-      storage.saveSubmission(submission as FormSubmission);
+      storage.saveSubmission(submission);
 
       // Update local state
-      setSubmissions(prev => [...prev, submission as FormSubmission]);
+      setSubmissions(prev => [...prev, submission]);
 
       return submission;
     } catch (err) {
@@ -110,7 +115,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       if (formId) {
         // Clear submissions for specific form
         const remainingSubmissions = submissions.filter(s => s.formId !== formId);
-        storage.saveSubmissions(remainingSubmissions as FormSubmission[]);
+        storage.saveSubmissions(remainingSubmissions);
         setSubmissions(remainingSubmissions);
       } else {
         // Clear all submissions

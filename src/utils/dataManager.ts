@@ -30,44 +30,48 @@ export class DataManager {
       return { isValid: false, errors: ['Invalid schema format'] };
     }
 
+    const s = schema as any; // Type assertion for validation function
+
     // Required fields
-    if (!schema.id || typeof schema.id !== 'string') {
+    if (!s.id || typeof s.id !== 'string') {
       errors.push('Schema must have a valid ID');
     }
 
-    if (!schema.title || typeof schema.title !== 'string') {
+    if (!s.title || typeof s.title !== 'string') {
       errors.push('Schema must have a title');
     }
 
-    if (!schema.sections || !Array.isArray(schema.sections)) {
+    if (!s.sections || !Array.isArray(s.sections)) {
       errors.push('Schema must have sections array');
-    } else if (schema.sections.length === 0) {
+    } else if (s.sections.length === 0) {
       errors.push('Schema must have at least one section');
     }
 
     // Validate sections
-    (schema as FormSchema).sections?.forEach((section: unknown, sectionIndex: number) => {
-      if (!section.id || typeof section.id !== 'string') {
+    s.sections?.forEach((section: unknown, sectionIndex: number) => {
+      const sec = section as any;
+      if (!sec.id || typeof sec.id !== 'string') {
         errors.push(`Section ${sectionIndex + 1} must have a valid ID`);
       }
 
-      if (!section.title || typeof section.title !== 'string') {
+      if (!sec.title || typeof sec.title !== 'string') {
         errors.push(`Section ${sectionIndex + 1} must have a title`);
       }
 
-      if (!section.fields || !Array.isArray(section.fields)) {
+      if (!sec.fields || !Array.isArray(sec.fields)) {
         errors.push(`Section ${sectionIndex + 1} must have fields array`);
       } else {
-        (section as { fields: unknown[] }).fields.forEach((field: unknown, fieldIndex: number) => {
-          if (!field.id || typeof field.id !== 'string') {
+        sec.fields.forEach((field: unknown, fieldIndex: number) => {
+          const f = field as any;
+          if (!f.id || typeof f.id !== 'string') {
             errors.push(`Field ${fieldIndex + 1} in section ${sectionIndex + 1} must have a valid ID`);
           }
 
-          if (!field.name || typeof field.name !== 'string') {
+          if (!f.name || typeof f.name !== 'string') {
             errors.push(`Field ${fieldIndex + 1} in section ${sectionIndex + 1} must have a name`);
           }
 
-          if (!field.type || typeof field.type !== 'string') {
+          if (!f.type || typeof f.type !== 'string') {
             errors.push(`Field ${fieldIndex + 1} in section ${sectionIndex + 1} must have a type`);
           }
         });
@@ -87,22 +91,24 @@ export class DataManager {
       return { isValid: false, errors: ['Invalid submission format'] };
     }
 
-    if (!submission.id || typeof submission.id !== 'string') {
+    const sub = submission as any; // Type assertion for validation function
+
+    if (!sub.id || typeof sub.id !== 'string') {
       errors.push('Submission must have a valid ID');
     }
 
-    if (!submission.formId || typeof submission.formId !== 'string') {
+    if (!sub.formId || typeof sub.formId !== 'string') {
       errors.push('Submission must have a valid form ID');
     }
 
-    if (!submission.data || typeof submission.data !== 'object') {
+    if (!sub.data || typeof sub.data !== 'object') {
       errors.push('Submission must have data object');
     }
 
-    if (!submission.metadata || typeof submission.metadata !== 'object') {
+    if (!sub.metadata || typeof sub.metadata !== 'object') {
       errors.push('Submission must have metadata object');
     } else {
-      if (!submission.metadata.submittedAt) {
+      if (!sub.metadata.submittedAt) {
         errors.push('Submission metadata must include submittedAt timestamp');
       }
     }
@@ -283,7 +289,7 @@ export class DataManager {
 
         if (submissionsToImport.length > 0) {
           const allSubmissions = [...existingSubmissions, ...submissionsToImport];
-          storage.saveSubmissions(allSubmissions as FormSubmission[]);
+          storage.saveSubmissions(allSubmissions);
           result.imported.submissions = submissionsToImport.length;
         }
       }
@@ -304,17 +310,17 @@ export class DataManager {
 
     const submissions = storage.getSubmissions();
     const oldSubmissions = submissions.filter(submission => {
-      const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
+      const submittedAt = new Date(submission.metadata.submittedAt);
       return submittedAt < cutoffDate;
     });
 
     if (oldSubmissions.length > 0) {
       const remainingSubmissions = submissions.filter(submission => {
-        const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
+        const submittedAt = new Date(submission.metadata.submittedAt);
         return submittedAt >= cutoffDate;
       });
 
-      storage.saveSubmissions(remainingSubmissions as FormSubmission[]);
+      storage.saveSubmissions(remainingSubmissions);
     }
 
     return oldSubmissions.length;
@@ -375,7 +381,7 @@ export class DataManager {
       const dateStr = date.toISOString().split('T')[0];
 
       const count = submissions.filter(submission => {
-        const submissionDate = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
+        const submissionDate = new Date(submission.metadata.submittedAt);
         return submissionDate.toISOString().split('T')[0] === dateStr;
       }).length;
 
@@ -383,16 +389,16 @@ export class DataManager {
     }
 
     const oldestSubmission = submissions.reduce((oldest, current) => {
-      return new Date((current as FormSubmission).metadata?.submittedAt || (current as FormSubmission).submittedAt) < new Date((oldest as FormSubmission).metadata?.submittedAt || (oldest as FormSubmission).submittedAt) ? current : oldest;
+      return new Date(current.metadata.submittedAt) < new Date(oldest.metadata.submittedAt) ? current : oldest;
     });
 
-    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date((oldestSubmission as FormSubmission).metadata?.submittedAt || (oldestSubmission as FormSubmission).submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
+    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date(oldestSubmission.metadata.submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
 
     return {
       totalSubmissions: submissions.length,
-      submissionsToday: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= today).length,
-      submissionsThisWeek: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= weekAgo).length,
-      submissionsThisMonth: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= monthAgo).length,
+      submissionsToday: submissions.filter(s => new Date(s.metadata.submittedAt) >= today).length,
+      submissionsThisWeek: submissions.filter(s => new Date(s.metadata.submittedAt) >= weekAgo).length,
+      submissionsThisMonth: submissions.filter(s => new Date(s.metadata.submittedAt) >= monthAgo).length,
       averageSubmissionsPerDay: Math.round((submissions.length / daysSinceFirst) * 100) / 100,
       fieldPopularity,
       submissionTrends

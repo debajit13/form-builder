@@ -159,7 +159,6 @@ describe('Storage Utilities', () => {
       id: 'sub-1',
       formId: 'form-1',
       data: { firstName: 'John', lastName: 'Doe' },
-      submittedAt: '2023-01-01T12:00:00.000Z',
       metadata: {
         submittedAt: '2023-01-01T12:00:00.000Z',
         userAgent: 'Test Browser',
@@ -276,7 +275,7 @@ describe('Storage Utilities', () => {
           status: 'draft',
           createdBy: 'test-user'
         }
-      } as FormSubmission
+      }
 
       expect(() => {
         storage.saveSchema(baseSchema)

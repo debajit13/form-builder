@@ -95,7 +95,7 @@ export function FormPreviewPage() {
         validationErrors: []
       }
 
-      storage.saveSubmission(submission as FormSubmission)
+      storage.saveSubmission(submission)
 
       setSubmissionResult({
         success: true,

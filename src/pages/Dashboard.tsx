@@ -32,7 +32,7 @@ export function Dashboard() {
           totalSubmissions: submissions.length,
           draftForms: forms.filter(form => form.metadata.status === 'draft').length,
           recentActivity: submissions.filter(sub => {
-            const submittedAt = new Date((sub as FormSubmission).submittedAt || (sub as FormSubmission).metadata?.submittedAt)
+            const submittedAt = new Date(sub.metadata.submittedAt)
             const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
             return submittedAt > weekAgo
           }).length
@@ -45,7 +45,7 @@ export function Dashboard() {
 
         // Get recent submissions (last 5)
         const sortedSubmissions = [...submissions]
-          .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
+          .sort((a, b) => new Date(b.metadata.submittedAt).getTime() - new Date(a.metadata.submittedAt).getTime())
           .slice(0, 5)
 
         setStats(dashboardStats)
@@ -268,7 +268,7 @@ export function Dashboard() {
                   <div className="flex-1">
                     <h3 className="font-medium text-gray-900 dark:text-white">Form Submission</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleDateString()}
+                      {new Date(submission.metadata.submittedAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">

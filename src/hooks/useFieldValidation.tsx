@@ -166,39 +166,45 @@ export function useFieldValidation({
 
 // Helper function to evaluate conditional logic
 function evaluateConditional(conditional: unknown, formData: Record<string, unknown>): boolean {
-  const fieldValue = formData[conditional.field];
+  // Type guard for conditional object
+  if (!conditional || typeof conditional !== 'object' || !('field' in conditional) || !('operator' in conditional) || !('value' in conditional)) {
+    return false;
+  }
+
+  const cond = conditional as { field: string; operator: string; value: unknown };
+  const fieldValue = formData[cond.field];
 
   let result = false;
-  switch (conditional.operator) {
+  switch (cond.operator) {
     case 'equals':
-      result = fieldValue === conditional.value;
+      result = fieldValue === cond.value;
       break;
     case 'not_equals':
-      result = fieldValue !== conditional.value;
+      result = fieldValue !== cond.value;
       break;
     case 'greater_than':
-      result = Number(fieldValue) > Number(conditional.value);
+      result = Number(fieldValue) > Number(cond.value);
       break;
     case 'less_than':
-      result = Number(fieldValue) < Number(conditional.value);
+      result = Number(fieldValue) < Number(cond.value);
       break;
     case 'contains':
-      result = String(fieldValue).includes(String(conditional.value));
+      result = String(fieldValue).includes(String(cond.value));
       break;
     case 'not_contains':
-      result = !String(fieldValue).includes(String(conditional.value));
+      result = !String(fieldValue).includes(String(cond.value));
       break;
     default:
       result = true;
   }
 
   // Handle nested conditions
-  if (conditional.rules && conditional.rules.length > 0) {
-    const nestedResults = (conditional as { rules: unknown[] }).rules.map((rule: unknown) =>
+  if (conditional && typeof conditional === 'object' && 'rules' in conditional && Array.isArray((conditional as any).rules) && (conditional as any).rules.length > 0) {
+    const nestedResults = ((conditional as any).rules as unknown[]).map((rule: unknown) =>
       evaluateConditional(rule, formData)
     );
 
-    if (conditional.logic === 'or') {
+    if ('logic' in conditional && (conditional as any).logic === 'or') {
       result = result || nestedResults.some((r) => r);
     } else {
       result = result && nestedResults.every((r) => r);

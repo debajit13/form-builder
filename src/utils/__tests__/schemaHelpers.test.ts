@@ -255,7 +255,7 @@ describe('SchemaHelpers', () => {
     })
 
     it('should add checkbox field to section', () => {
-      sectionBuilder.addCheckboxField('agree', 'I agree to terms', {
+      sectionBuilder.addCheckboxField('agree', 'I agree to terms', undefined, {
         validation: { required: true }
       })
 

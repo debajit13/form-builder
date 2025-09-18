@@ -355,7 +355,7 @@ describe('DynamicFormGenerator', () => {
 
     it('should show loading state during submission', async () => {
       const mockOnSubmit = vi.fn(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise<void>((resolve) => setTimeout(resolve, 100))
       );
       const user = userEvent.setup();
 
@@ -521,7 +521,7 @@ describe('DynamicFormGenerator', () => {
   describe('Validation', () => {
     it('should display validation errors', async () => {
       const { SchemaValidator } = await import('../../utils/validation');
-      SchemaValidator.validateFormData.mockReturnValue([
+      (SchemaValidator.validateFormData as any).mockReturnValue([
         { field: 'firstName', message: 'First name is required' },
         { field: 'email', message: 'Invalid email format' },
       ]);

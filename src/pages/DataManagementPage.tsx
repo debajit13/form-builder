@@ -62,7 +62,7 @@ export function DataManagementPage() {
           totalSubmissions: allSubmissions.length,
           submissionsByForm,
           recentSubmissions: allSubmissions
-            .sort((a, b) => new Date((b as FormSubmission).submittedAt || (b as FormSubmission).metadata?.submittedAt).getTime() - new Date((a as FormSubmission).submittedAt || (a as FormSubmission).metadata?.submittedAt).getTime())
+            .sort((a, b) => new Date(b.metadata.submittedAt).getTime() - new Date(a.metadata.submittedAt).getTime())
             .slice(0, 10) as FormSubmission[],
           completionRate,
           averageCompletionTime: 0 // We don't track completion time yet
@@ -392,7 +392,7 @@ export function DataManagementPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
+                            {new Date(submission.metadata.submittedAt).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -517,7 +517,7 @@ export function DataManagementPage() {
                           {form?.title || 'Unknown Form'}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
+                          {new Date(submission.metadata.submittedAt).toLocaleString()}
                         </p>
                       </div>
                       <span className={`px-2 py-1 text-xs rounded-full ${
