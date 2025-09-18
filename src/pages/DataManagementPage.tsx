@@ -44,7 +44,7 @@ export function DataManagementPage() {
         const allSubmissions = storage.getSubmissions()
 
         setForms(allForms)
-        setSubmissions(allSubmissions as any)
+        setSubmissions(allSubmissions as FormSubmission[])
 
         // Calculate analytics
         const submissionsByForm = allSubmissions.reduce((acc, sub) => {
@@ -52,7 +52,7 @@ export function DataManagementPage() {
           return acc
         }, {} as Record<string, number>)
 
-        const completedSubmissions = allSubmissions.filter(sub => (sub as any).status === 'complete')
+        const completedSubmissions = allSubmissions.filter(sub => (sub as FormSubmission).status === 'complete')
         const completionRate = allSubmissions.length > 0
           ? (completedSubmissions.length / allSubmissions.length) * 100
           : 0
@@ -61,8 +61,8 @@ export function DataManagementPage() {
           totalSubmissions: allSubmissions.length,
           submissionsByForm,
           recentSubmissions: allSubmissions
-            .sort((a, b) => new Date((b as any).submittedAt || (b as any).metadata?.submittedAt).getTime() - new Date((a as any).submittedAt || (a as any).metadata?.submittedAt).getTime())
-            .slice(0, 10) as any,
+            .sort((a, b) => new Date((b as FormSubmission).submittedAt || (b as FormSubmission).metadata?.submittedAt).getTime() - new Date((a as FormSubmission).submittedAt || (a as FormSubmission).metadata?.submittedAt).getTime())
+            .slice(0, 10) as FormSubmission[],
           completionRate,
           averageCompletionTime: 0 // We don't track completion time yet
         }
@@ -324,7 +324,7 @@ export function DataManagementPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {new Date((submission as any).submittedAt || (submission as any).metadata?.submittedAt).toLocaleString()}
+                            {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -449,7 +449,7 @@ export function DataManagementPage() {
                           {form?.title || 'Unknown Form'}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {new Date((submission as any).submittedAt || (submission as any).metadata?.submittedAt).toLocaleString()}
+                          {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
                         </p>
                       </div>
                       <span className={`px-2 py-1 text-xs rounded-full ${

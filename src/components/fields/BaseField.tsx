@@ -20,7 +20,6 @@ export interface BaseFieldProps {
 
 export function BaseField({
   id,
-  name,
   label,
   description,
   required = false,

@@ -71,32 +71,6 @@ export function ValidationDisplay({
     }
   };
 
-  const getStatusColor = () => {
-    switch (status) {
-      case 'validating':
-        return 'text-blue-600 dark:text-blue-400';
-      case 'valid':
-        return 'text-green-600 dark:text-green-400';
-      case 'error':
-        return 'text-red-600 dark:text-red-400';
-      default:
-        return 'text-gray-500 dark:text-gray-400';
-    }
-  };
-
-  const getBorderColor = () => {
-    switch (status) {
-      case 'validating':
-        return 'border-blue-300';
-      case 'valid':
-        return 'border-green-300';
-      case 'error':
-        return 'border-red-300';
-      default:
-        return 'border-gray-300';
-    }
-  };
-
   if (compact) {
     return (
       <div className={`flex items-center space-x-1 ${className}`}>

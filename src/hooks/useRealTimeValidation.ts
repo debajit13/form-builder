@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import type { FieldSchema, ValidationError, FormSubmissionData } from '../types/schema';
+import type { FieldSchema, ValidationError } from '../types/schema';
 import { SchemaValidator } from '../utils/validation';
 
 interface UseRealTimeValidationOptions {
@@ -39,7 +39,7 @@ export function useRealTimeValidation({
   const isTouched = touchedFields[field.name];
   const isDirty = dirtyFields[field.name];
 
-  const validateField = useCallback(async (value: any) => {
+  const validateField = useCallback(async (value: unknown) => {
     if (!validateOnChange && !isTouched) return;
 
     setValidationState(prev => ({ ...prev, isValidating: true }));
@@ -54,7 +54,7 @@ export function useRealTimeValidation({
         error,
         isValid: !error,
       }));
-    } catch (err) {
+    } catch {
       setValidationState(prev => ({
         ...prev,
         isValidating: false,
@@ -147,7 +147,7 @@ export function useFormValidation(fields: FieldSchema[]) {
       });
 
       return errors;
-    } catch (err) {
+    } catch {
       setFormValidationState({
         isValidating: false,
         errors: [{ field: 'form', message: 'Form validation failed', type: 'custom' }],

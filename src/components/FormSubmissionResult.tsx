@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { FormSchema, FormSubmissionData } from '../types/schema';
-import { LoadingSpinner } from './LoadingSpinner';
 
 interface FormSubmissionResultProps {
   result: {
@@ -49,16 +48,16 @@ export function FormSubmissionResult({ result, schema, onStartOver, className = 
       await navigator.clipboard.writeText(JSON.stringify(result.data, null, 2));
       // Add a small delay to show loading state
       await new Promise(resolve => setTimeout(resolve, 200));
-      alert('Data copied to clipboard!');
+      window.alert('Data copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy to clipboard:', err);
-      alert('Failed to copy to clipboard');
+      window.alert('Failed to copy to clipboard');
     } finally {
       setIsCopying(false);
     }
   };
 
-  const formatValue = (value: any): string => {
+  const formatValue = (value: unknown): string => {
     if (value === null || value === undefined) return 'N/A';
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (Array.isArray(value)) return value.join(', ');
@@ -66,13 +65,6 @@ export function FormSubmissionResult({ result, schema, onStartOver, className = 
     return String(value);
   };
 
-  const getFieldLabel = (fieldName: string): string => {
-    for (const section of schema.sections) {
-      const field = section.fields.find(f => f.name === fieldName);
-      if (field) return field.label;
-    }
-    return fieldName;
-  };
 
   return (
     <div className={`max-w-4xl mx-auto ${className}`}>

@@ -4,7 +4,7 @@ import type { FormSchema, FieldSchema, SelectOption } from '../types/schema';
 import { SchemaValidator } from '../utils/validation';
 
 // Helper function to extract error message from React Hook Form errors
-function getErrorMessage(error: any): string {
+function getErrorMessage(error: unknown): string {
   if (!error) return 'This field has an error';
 
   // React Hook Form error can be:
@@ -75,7 +75,7 @@ function getErrorMessage(error: any): string {
 
 interface SchemaPreviewProps {
   schema: FormSchema;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: Record<string, unknown>) => void;
 }
 
 export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
@@ -93,7 +93,7 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
 
   const watchedValues = watch();
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: Record<string, unknown>) => {
     if (onSubmit) {
       onSubmit(data);
     } else {
@@ -156,8 +156,11 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
             />
           );
 
-        case 'number':
-          const numberField = field as any;
+        case 'number': {
+          const numberField = field as FieldSchema & {
+            prefix?: string;
+            suffix?: string;
+          };
           return (
             <div className="relative">
               {numberField.prefix && (
@@ -173,7 +176,7 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
                 readOnly={field.readonly}
                 min={field.validation?.min}
                 max={field.validation?.max}
-                step={(field.validation as any)?.step}
+                step={field.validation && 'step' in field.validation ? (field.validation as { step?: number }).step : undefined}
                 className={`${baseClasses} ${
                   numberField.prefix ? 'pl-8' : ''
                 } ${numberField.suffix ? 'pr-16' : ''}`}
@@ -185,6 +188,7 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
               )}
             </div>
           );
+        }
 
         case 'date':
           return (
@@ -197,8 +201,10 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
             />
           );
 
-        case 'textarea':
-          const textareaField = field as any;
+        case 'textarea': {
+          const textareaField = field as FieldSchema & {
+            rows?: number;
+          };
           return (
             <textarea
               {...register(field.name)}
@@ -209,9 +215,13 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
               className={baseClasses}
             />
           );
+        }
 
-        case 'select':
-          const selectField = field as any;
+        case 'select': {
+          const selectField = field as FieldSchema & {
+            options?: SelectOption[];
+            multiple?: boolean;
+          };
           if (selectField.multiple) {
             return (
               <select
@@ -251,9 +261,12 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
               ))}
             </select>
           );
+        }
 
-        case 'radio':
-          const radioField = field as any;
+        case 'radio': {
+          const radioField = field as FieldSchema & {
+            options?: SelectOption[];
+          };
           return (
             <div className="space-y-2">
               {radioField.options?.map((option: SelectOption) => (
@@ -275,9 +288,12 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
               ))}
             </div>
           );
+        }
 
-        case 'checkbox':
-          const checkboxField = field as any;
+        case 'checkbox': {
+          const checkboxField = field as FieldSchema & {
+            options?: SelectOption[];
+          };
 
           if (checkboxField.options) {
             // Multiple checkboxes
@@ -316,15 +332,16 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
               <span className="text-gray-700">{field.label}</span>
             </label>
           );
+        }
 
         default:
           return (
             <input
               type="text"
-              {...register((field as any).name)}
-              placeholder={(field as any).placeholder}
-              disabled={(field as any).disabled}
-              readOnly={(field as any).readonly}
+              {...register(field.name)}
+              placeholder={field.placeholder}
+              disabled={field.disabled}
+              readOnly={field.readonly}
               className={baseClasses}
             />
           );
@@ -333,7 +350,7 @@ export function SchemaPreview({ schema, onSubmit }: SchemaPreviewProps) {
 
     return (
       <div key={field.id} className="space-y-2">
-        {field.type !== 'checkbox' || (field as any).options ? (
+        {field.type !== 'checkbox' || 'options' in field ? (
           <label className="block text-sm font-medium text-gray-700">
             {field.label}
             {field.validation?.required && (

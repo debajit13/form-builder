@@ -1,4 +1,4 @@
-import type { FormSchema, FormSubmission, FormSubmissionData } from '../types/schema';
+import type { FormSchema, FormSubmission } from '../types/schema';
 import { storage } from './storage';
 
 export interface DataExportOptions {
@@ -23,7 +23,7 @@ export interface DataImportResult {
 
 export class DataManager {
   // Data validation
-  static validateSchema(schema: any): { isValid: boolean; errors: string[] } {
+  static validateSchema(schema: unknown): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!schema || typeof schema !== 'object') {
@@ -46,7 +46,7 @@ export class DataManager {
     }
 
     // Validate sections
-    schema.sections?.forEach((section: any, sectionIndex: number) => {
+    (schema as FormSchema).sections?.forEach((section: unknown, sectionIndex: number) => {
       if (!section.id || typeof section.id !== 'string') {
         errors.push(`Section ${sectionIndex + 1} must have a valid ID`);
       }
@@ -58,7 +58,7 @@ export class DataManager {
       if (!section.fields || !Array.isArray(section.fields)) {
         errors.push(`Section ${sectionIndex + 1} must have fields array`);
       } else {
-        section.fields.forEach((field: any, fieldIndex: number) => {
+        (section as { fields: unknown[] }).fields.forEach((field: unknown, fieldIndex: number) => {
           if (!field.id || typeof field.id !== 'string') {
             errors.push(`Field ${fieldIndex + 1} in section ${sectionIndex + 1} must have a valid ID`);
           }
@@ -80,7 +80,7 @@ export class DataManager {
     };
   }
 
-  static validateSubmission(submission: any): { isValid: boolean; errors: string[] } {
+  static validateSubmission(submission: unknown): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!submission || typeof submission !== 'object') {
@@ -134,7 +134,7 @@ export class DataManager {
     }
 
     if (includeSubmissions) {
-      submissions = storage.getSubmissions() as any;
+      submissions = storage.getSubmissions() as FormSubmission[];
 
       if (formIds) {
         submissions = submissions.filter(submission => formIds.includes(submission.formId));
@@ -142,7 +142,7 @@ export class DataManager {
 
       if (dateRange) {
         submissions = submissions.filter(submission => {
-          const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
+          const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
           return submittedAt >= dateRange.start && submittedAt <= dateRange.end;
         });
       }
@@ -167,7 +167,7 @@ export class DataManager {
     return JSON.stringify(exportData, null, 2);
   }
 
-  static convertToCSV(data: any): string {
+  static convertToCSV(data: unknown[]): string {
     const lines: string[] = [];
 
     // Export schemas as CSV
@@ -210,7 +210,7 @@ export class DataManager {
           submission.id,
           submission.formId,
           submission.status,
-          (submission as any).metadata?.submittedAt || (submission as any).submittedAt,
+          (submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt,
           ...Array.from(allFieldNames).map(fieldName => {
             const value = submission.data[fieldName];
             return `"${String(value || '').replace(/"/g, '""')}"`;
@@ -241,7 +241,7 @@ export class DataManager {
       // Import schemas
       if (data.schemas && Array.isArray(data.schemas)) {
         const existingSchemas = storage.getSchemas();
-        let schemasToImport: FormSchema[] = [];
+        const schemasToImport: FormSchema[] = [];
 
         for (const schema of data.schemas) {
           const validation = this.validateSchema(schema);
@@ -266,7 +266,7 @@ export class DataManager {
       // Import submissions
       if (data.submissions && Array.isArray(data.submissions)) {
         const existingSubmissions = storage.getSubmissions();
-        let submissionsToImport: FormSubmission[] = [];
+        const submissionsToImport: FormSubmission[] = [];
 
         for (const submission of data.submissions) {
           const validation = this.validateSubmission(submission);
@@ -283,7 +283,7 @@ export class DataManager {
 
         if (submissionsToImport.length > 0) {
           const allSubmissions = [...existingSubmissions, ...submissionsToImport];
-          storage.saveSubmissions(allSubmissions as any);
+          storage.saveSubmissions(allSubmissions as FormSubmission[]);
           result.imported.submissions = submissionsToImport.length;
         }
       }
@@ -304,17 +304,17 @@ export class DataManager {
 
     const submissions = storage.getSubmissions();
     const oldSubmissions = submissions.filter(submission => {
-      const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
+      const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
       return submittedAt < cutoffDate;
     });
 
     if (oldSubmissions.length > 0) {
       const remainingSubmissions = submissions.filter(submission => {
-        const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
+        const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
         return submittedAt >= cutoffDate;
       });
 
-      storage.saveSubmissions(remainingSubmissions as any);
+      storage.saveSubmissions(remainingSubmissions as FormSubmission[]);
     }
 
     return oldSubmissions.length;
@@ -375,7 +375,7 @@ export class DataManager {
       const dateStr = date.toISOString().split('T')[0];
 
       const count = submissions.filter(submission => {
-        const submissionDate = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
+        const submissionDate = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
         return submissionDate.toISOString().split('T')[0] === dateStr;
       }).length;
 
@@ -383,16 +383,16 @@ export class DataManager {
     }
 
     const oldestSubmission = submissions.reduce((oldest, current) => {
-      return new Date((current as any).metadata?.submittedAt || (current as any).submittedAt) < new Date((oldest as any).metadata?.submittedAt || (oldest as any).submittedAt) ? current : oldest;
+      return new Date((current as FormSubmission).metadata?.submittedAt || (current as FormSubmission).submittedAt) < new Date((oldest as FormSubmission).metadata?.submittedAt || (oldest as FormSubmission).submittedAt) ? current : oldest;
     });
 
-    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date((oldestSubmission as any).metadata?.submittedAt || (oldestSubmission as any).submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
+    const daysSinceFirst = Math.max(1, Math.floor((now.getTime() - new Date((oldestSubmission as FormSubmission).metadata?.submittedAt || (oldestSubmission as FormSubmission).submittedAt).getTime()) / (1000 * 60 * 60 * 24)));
 
     return {
       totalSubmissions: submissions.length,
-      submissionsToday: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= today).length,
-      submissionsThisWeek: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= weekAgo).length,
-      submissionsThisMonth: submissions.filter(s => new Date((s as any).metadata?.submittedAt || (s as any).submittedAt) >= monthAgo).length,
+      submissionsToday: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= today).length,
+      submissionsThisWeek: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= weekAgo).length,
+      submissionsThisMonth: submissions.filter(s => new Date((s as FormSubmission).metadata?.submittedAt || (s as FormSubmission).submittedAt) >= monthAgo).length,
       averageSubmissionsPerDay: Math.round((submissions.length / daysSinceFirst) * 100) / 100,
       fieldPopularity,
       submissionTrends

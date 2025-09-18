@@ -77,7 +77,7 @@ export function SubmissionDetailsPage() {
     }
   }
 
-  const formatFieldValue = (value: any): string => {
+  const formatFieldValue = (value: unknown): string => {
     if (value === null || value === undefined) {
       return 'N/A'
     }
@@ -188,7 +188,7 @@ export function SubmissionDetailsPage() {
           <div>
             <dt className="text-sm font-medium text-gray-500">Submitted At</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {new Date((submission as any).submittedAt || (submission as any).metadata?.submittedAt).toLocaleString()}
+              {new Date((submission as FormSubmission).submittedAt || (submission as FormSubmission).metadata?.submittedAt).toLocaleString()}
             </dd>
           </div>
           <div>
@@ -226,7 +226,7 @@ export function SubmissionDetailsPage() {
             {/* Group fields by section */}
             {form.sections.map((section) => {
               const sectionFields = section.fields.filter(field =>
-                submission.data && submission.data.hasOwnProperty(field.name)
+                submission.data && Object.prototype.hasOwnProperty.call(submission.data, field.name)
               )
 
               if (sectionFields.length === 0) return null

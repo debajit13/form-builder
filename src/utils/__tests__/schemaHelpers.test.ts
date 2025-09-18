@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { SchemaBuilder, SectionBuilder } from '../schemaHelpers'
-import type { FormSchema, FormSection } from '../../types/schema'
+import type { FormSection } from '../../types/schema'
 
 // Mock uuid
 vi.mock('uuid', () => ({

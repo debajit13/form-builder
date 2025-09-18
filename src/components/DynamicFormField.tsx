@@ -7,8 +7,7 @@ import type {
 } from '../types/schema';
 import { useRealTimeValidation } from '../hooks/useRealTimeValidation';
 import { ValidationDisplay } from './ValidationDisplay';
-import { extractErrorMessage, classNames } from '../utils/formHelpers';
-import { FIELD_TYPES } from '../utils/constants';
+import { extractErrorMessage } from '../utils/formHelpers';
 
 interface DynamicFormFieldProps {
   field: FieldSchema;
@@ -21,7 +20,6 @@ interface DynamicFormFieldProps {
 
 export function DynamicFormField({
   field,
-  watchedValues: _watchedValues,
   theme,
   showValidation = true,
   showValidationRules = false,
@@ -100,8 +98,12 @@ export function DynamicFormField({
           />
         );
 
-      case 'number':
-        const numberField = field as any;
+      case 'number': {
+        const numberField = field as FieldSchema & {
+          prefix?: string;
+          suffix?: string;
+          unit?: string;
+        };
         return (
           <div className='relative'>
             {numberField.prefix && (
@@ -123,7 +125,7 @@ export function DynamicFormField({
               defaultValue={field.defaultValue}
               min={field.validation?.min}
               max={field.validation?.max}
-              step={(field.validation as any)?.step || 'any'}
+              step={(field.validation as { step?: string | number })?.step || 'any'}
               onBlur={handlers.onBlur}
               className={`${baseClasses} ${getThemeClasses()} ${
                 numberField.prefix ? 'pl-8' : ''
@@ -146,6 +148,7 @@ export function DynamicFormField({
             )}
           </div>
         );
+      }
 
       case 'date':
         return (
@@ -156,8 +159,8 @@ export function DynamicFormField({
             disabled={field.disabled}
             readOnly={field.readonly}
             defaultValue={field.defaultValue}
-            min={(field.validation as any)?.minDate}
-            max={(field.validation as any)?.maxDate}
+            min={(field.validation as { minDate?: string })?.minDate}
+            max={(field.validation as { maxDate?: string })?.maxDate}
             onBlur={handlers.onBlur}
             className={`${baseClasses} ${getThemeClasses()}`}
             style={{
@@ -173,8 +176,10 @@ export function DynamicFormField({
           />
         );
 
-      case 'textarea':
-        const textareaField = field as any;
+      case 'textarea': {
+        const textareaField = field as FieldSchema & {
+          rows?: number;
+        };
         return (
           <textarea
             id={field.name}
@@ -198,9 +203,13 @@ export function DynamicFormField({
             aria-invalid={hasError}
           />
         );
+      }
 
-      case 'select':
-        const selectField = field as any;
+      case 'select': {
+        const selectField = field as FieldSchema & {
+          multiple?: boolean;
+          options?: SelectOption[];
+        };
 
         if (selectField.multiple) {
           return (
@@ -268,9 +277,12 @@ export function DynamicFormField({
             ))}
           </select>
         );
+      }
 
-      case 'radio':
-        const radioField = field as any;
+      case 'radio': {
+        const radioField = field as FieldSchema & {
+          options?: SelectOption[];
+        };
         return (
           <div className='space-y-3'>
             {radioField.options?.map((option: SelectOption) => (
@@ -310,9 +322,12 @@ export function DynamicFormField({
             ))}
           </div>
         );
+      }
 
-      case 'checkbox':
-        const checkboxField = field as any;
+      case 'checkbox': {
+        const checkboxField = field as FieldSchema & {
+          options?: SelectOption[];
+        };
 
         if (checkboxField.options) {
           // Multiple checkboxes
@@ -389,9 +404,10 @@ export function DynamicFormField({
             </span>
           </label>
         );
+      }
 
-      default:
-        const defaultField = field as any;
+      default: {
+        const defaultField = field as FieldSchema;
         return (
           <input
             id={defaultField.name}
@@ -415,6 +431,7 @@ export function DynamicFormField({
             aria-invalid={hasError}
           />
         );
+      }
     }
   };
 
@@ -431,7 +448,7 @@ export function DynamicFormField({
       }}
     >
       {/* Field Label */}
-      {field.type !== 'checkbox' || (field as any).options ? (
+      {field.type !== 'checkbox' || (field as FieldSchema & { options?: SelectOption[] }).options ? (
         <label
           htmlFor={field.name}
           className={`block text-sm font-medium transition-colors ${
@@ -455,9 +472,9 @@ export function DynamicFormField({
         {renderField()}
 
         {/* Field Unit (for number fields) */}
-        {field.type === 'number' && (field as any).unit && (
+        {field.type === 'number' && (field as FieldSchema & { unit?: string }).unit && (
           <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none text-sm'>
-            {(field as any).unit}
+            {(field as FieldSchema & { unit?: string }).unit}
           </span>
         )}
       </div>

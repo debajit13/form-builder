@@ -42,7 +42,7 @@ export interface BaseFieldSchema {
   label: string;
   description?: string;
   placeholder?: string;
-  defaultValue?: any;
+  defaultValue?: unknown;
   disabled?: boolean;
   readonly?: boolean;
   hidden?: boolean;
@@ -94,7 +94,7 @@ export type FieldSchema =
 export interface ConditionalRule {
   field: string;
   operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'not_contains';
-  value: any;
+  value: unknown;
   logic?: 'and' | 'or';
   rules?: ConditionalRule[];
 }
@@ -169,7 +169,7 @@ export interface ValidationError {
 }
 
 export interface FormSubmissionData {
-  [fieldName: string]: any;
+  [fieldName: string]: unknown;
 }
 
 export interface FormSubmission {

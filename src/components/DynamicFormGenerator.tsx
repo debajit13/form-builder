@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { FormSchema, FormSubmissionData, ValidationError } from '../types/schema';
+import type { FormSchema, FormSubmissionData, ValidationError, FieldSchema, SelectOption, FormSubmission } from '../types/schema';
 import { SchemaValidator } from '../utils/validation';
 import { DynamicFormSection } from './DynamicFormSection';
 import { FormProgressIndicator } from './FormProgressIndicator';
@@ -22,6 +22,7 @@ interface DynamicFormGeneratorProps {
   showValidation?: boolean;
   showValidationRules?: boolean;
   realTimeValidation?: boolean;
+  saveToStorage?: boolean;
 }
 
 type FormStep = {
@@ -42,7 +43,8 @@ export function DynamicFormGenerator({
   resetButtonText,
   showValidation = true,
   showValidationRules = false,
-  realTimeValidation = true
+  realTimeValidation = true,
+  saveToStorage = true
 }: DynamicFormGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [submissionResult, setSubmissionResult] = useState<{
@@ -79,6 +81,55 @@ export function DynamicFormGenerator({
 
   const currentSection = schema.sections[currentStep];
 
+  // Process form data (convert types, handle special fields)
+  const processFormData = useCallback((data: FormSubmissionData): FormSubmissionData => {
+    const processed: FormSubmissionData = {};
+
+    schema.sections.forEach(section => {
+      section.fields.forEach(field => {
+        const value = data[field.name];
+
+        if (value !== undefined && value !== null && value !== '') {
+          switch (field.type) {
+            case 'number':
+              processed[field.name] = typeof value === 'string' ? parseFloat(value) : value;
+              break;
+            case 'date':
+              processed[field.name] = typeof value === 'string' ? value : value;
+              break;
+            case 'checkbox': {
+              const checkboxField = field as FieldSchema & { options?: SelectOption[] };
+              if (checkboxField.options) {
+                // Multiple checkboxes - array of values
+                processed[field.name] = Array.isArray(value) ? value : [value];
+              } else {
+                // Single checkbox - boolean
+                processed[field.name] = Boolean(value);
+              }
+              break;
+            }
+            case 'select': {
+              const selectField = field as FieldSchema & { multiple?: boolean };
+              if (selectField.multiple) {
+                processed[field.name] = Array.isArray(value) ? value : [value];
+              } else {
+                processed[field.name] = value;
+              }
+              break;
+            }
+            default:
+              processed[field.name] = value;
+          }
+        }
+      });
+    });
+
+    return processed;
+  }, [schema]);
+
+  // Track form start time for analytics
+  const [startTime] = useState(Date.now());
+
   // Handle form submission
   const handleFormSubmit = useCallback(async (data: FormSubmissionData) => {
     setIsSubmitting(true);
@@ -99,21 +150,23 @@ export function DynamicFormGenerator({
       // Process form data
       const processedData = processFormData(data);
 
-      // Save submission to storage
-      const submission = {
-        id: uuidv4(),
-        formId: schema.id,
-        data: processedData,
-        metadata: {
-          submittedAt: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          duration: Date.now() - startTime
-        },
-        status: 'complete' as const,
-        validationErrors: []
-      };
+      // Save submission to storage only if saveToStorage is true
+      if (saveToStorage) {
+        const submission: FormSubmission = {
+          id: uuidv4(),
+          formId: schema.id,
+          data: processedData,
+          metadata: {
+            submittedAt: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            duration: Date.now() - startTime
+          },
+          status: 'complete' as const,
+          validationErrors: []
+        };
 
-      storage.saveSubmission(submission as any);
+        storage.saveSubmission(submission);
+      }
 
       // Call custom onSubmit handler
       if (onSubmit) {
@@ -135,7 +188,7 @@ export function DynamicFormGenerator({
     } finally {
       setIsSubmitting(false);
     }
-  }, [schema, onSubmit]);
+  }, [schema, onSubmit, processFormData, startTime, saveToStorage]);
 
   // Save draft
   const handleSaveDraft = useCallback(() => {
@@ -185,50 +238,6 @@ export function DynamicFormGenerator({
     }
   };
 
-  // Process form data (convert types, handle special fields)
-  const processFormData = (data: FormSubmissionData): FormSubmissionData => {
-    const processed: FormSubmissionData = {};
-
-    schema.sections.forEach(section => {
-      section.fields.forEach(field => {
-        const value = data[field.name];
-
-        if (value !== undefined && value !== null && value !== '') {
-          switch (field.type) {
-            case 'number':
-              processed[field.name] = typeof value === 'string' ? parseFloat(value) : value;
-              break;
-            case 'date':
-              processed[field.name] = typeof value === 'string' ? value : value;
-              break;
-            case 'checkbox':
-              if ((field as any).options) {
-                // Multiple checkboxes - array of values
-                processed[field.name] = Array.isArray(value) ? value : [value];
-              } else {
-                // Single checkbox - boolean
-                processed[field.name] = Boolean(value);
-              }
-              break;
-            case 'select':
-              if ((field as any).multiple) {
-                processed[field.name] = Array.isArray(value) ? value : [value];
-              } else {
-                processed[field.name] = value;
-              }
-              break;
-            default:
-              processed[field.name] = value;
-          }
-        }
-      });
-    });
-
-    return processed;
-  };
-
-  // Track form start time for analytics
-  const [startTime] = useState(Date.now());
 
   // Reset form
   const handleReset = () => {

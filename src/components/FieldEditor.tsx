@@ -22,11 +22,11 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
   ];
 
   const handleOptionsChange = (options: SelectOption[]) => {
-    onChange({ options } as Partial<FieldSchema>);
+    onChange({ options: options } as Partial<FieldSchema>);
   };
 
   const addOption = () => {
-    const currentOptions = (field as any).options || [];
+    const currentOptions = (field as FieldSchema & { options?: SelectOption[] }).options || [];
     const newOption: SelectOption = {
       value: `option-${currentOptions.length + 1}`,
       label: `Option ${currentOptions.length + 1}`
@@ -35,7 +35,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
   };
 
   const updateOption = (index: number, updates: Partial<SelectOption>) => {
-    const currentOptions = (field as any).options || [];
+    const currentOptions = (field as FieldSchema & { options?: SelectOption[] }).options || [];
     const updatedOptions = currentOptions.map((option: SelectOption, i: number) =>
       i === index ? { ...option, ...updates } : option
     );
@@ -43,13 +43,13 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
   };
 
   const removeOption = (index: number) => {
-    const currentOptions = (field as any).options || [];
+    const currentOptions = (field as FieldSchema & { options?: SelectOption[] }).options || [];
     const updatedOptions = currentOptions.filter((_: SelectOption, i: number) => i !== index);
     handleOptionsChange(updatedOptions);
   };
 
   const needsOptions = field.type === 'select' || field.type === 'radio' ||
-    (field.type === 'checkbox' && (field as any).options);
+    (field.type === 'checkbox' && (field as FieldSchema & { options?: SelectOption[] }).options);
 
   return (
     <div className="space-y-6">
@@ -157,7 +157,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
           </div>
 
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {((field as any).options || []).map((option: SelectOption, index: number) => (
+            {((field as FieldSchema & { options?: SelectOption[] }).options || []).map((option: SelectOption, index: number) => (
               <div key={index} className="flex gap-2">
                 <input
                   type="text"
@@ -195,7 +195,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
           </label>
           <input
             type="number"
-            value={(field as any).rows || 3}
+            value={(field as FieldSchema & { rows?: number }).rows || 3}
             onChange={(e) => onChange({ rows: parseInt(e.target.value) } as Partial<FieldSchema>)}
             min={1}
             max={10}
@@ -212,7 +212,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
             </label>
             <input
               type="text"
-              value={(field as any).prefix || ''}
+              value={(field as FieldSchema & { prefix?: string }).prefix || ''}
               onChange={(e) => onChange({ prefix: e.target.value } as Partial<FieldSchema>)}
               placeholder="$"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -224,7 +224,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
             </label>
             <input
               type="text"
-              value={(field as any).suffix || ''}
+              value={(field as FieldSchema & { suffix?: string }).suffix || ''}
               onChange={(e) => onChange({ suffix: e.target.value } as Partial<FieldSchema>)}
               placeholder="USD"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -238,7 +238,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={(field as any).multiple || false}
+              checked={(field as FieldSchema & { multiple?: boolean }).multiple || false}
               onChange={(e) => onChange({ multiple: e.target.checked } as Partial<FieldSchema>)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />

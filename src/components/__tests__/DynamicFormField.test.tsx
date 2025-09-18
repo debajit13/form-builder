@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
 import { DynamicFormField } from '../DynamicFormField'
-import type { TextFieldSchema, NumberFieldSchema, SelectFieldSchema } from '../../types/schema'
+import type { TextFieldSchema, NumberFieldSchema, SelectFieldSchema, FieldSchema } from '../../types/schema'
 
 // Mock the validation hook
 vi.mock('../../hooks/useRealTimeValidation', () => ({
@@ -20,7 +20,7 @@ vi.mock('../../hooks/useRealTimeValidation', () => ({
 }))
 
 // Test wrapper component
-function TestWrapper({ children, defaultValues = {} }: { children: React.ReactNode, defaultValues?: any }) {
+function TestWrapper({ children, defaultValues = {} }: { children: React.ReactNode, defaultValues?: Record<string, unknown> }) {
   const methods = useForm({ defaultValues })
   return (
     <FormProvider {...methods}>
@@ -173,7 +173,7 @@ describe('DynamicFormField', () => {
         label: 'Price',
         prefix: '$',
         suffix: ' USD'
-      } as any
+      } as NumberFieldSchema & { prefix?: string; suffix?: string }
 
       render(
         <TestWrapper>
@@ -224,7 +224,7 @@ describe('DynamicFormField', () => {
           { value: 'ts', label: 'TypeScript' },
           { value: 'react', label: 'React' }
         ]
-      } as any
+      } as SelectFieldSchema & { multiple?: boolean }
 
       render(
         <TestWrapper>
@@ -245,7 +245,7 @@ describe('DynamicFormField', () => {
         type: 'textarea',
         label: 'Message',
         rows: 5
-      } as any
+      } as FieldSchema & { type: 'textarea'; rows?: number }
 
       render(
         <TestWrapper>
@@ -270,7 +270,7 @@ describe('DynamicFormField', () => {
           minDate: '1920-01-01',
           maxDate: '2005-12-31'
         }
-      } as any
+      } as FieldSchema & { type: 'date'; validation?: { minDate?: string; maxDate?: string } }
 
       render(
         <TestWrapper>
@@ -292,7 +292,7 @@ describe('DynamicFormField', () => {
         name: 'agree',
         type: 'checkbox',
         label: 'I agree to the terms'
-      } as any
+      } as FieldSchema & { type: 'checkbox' }
 
       render(
         <TestWrapper>
@@ -315,7 +315,7 @@ describe('DynamicFormField', () => {
           { value: 'gaming', label: 'Gaming' },
           { value: 'sports', label: 'Sports' }
         ]
-      } as any
+      } as FieldSchema & { type: 'checkbox'; options?: { value: string; label: string }[] }
 
       render(
         <TestWrapper>
@@ -341,7 +341,7 @@ describe('DynamicFormField', () => {
           { value: 'female', label: 'Female' },
           { value: 'other', label: 'Other' }
         ]
-      } as any
+      } as FieldSchema & { type: 'radio'; options: { value: string; label: string }[] }
 
       render(
         <TestWrapper>
@@ -454,7 +454,7 @@ describe('DynamicFormField', () => {
         name: 'checkboxField',
         type: 'checkbox',
         label: 'Checkbox Field'
-      } as any
+      } as FieldSchema & { type: 'checkbox' }
 
       render(
         <TestWrapper>

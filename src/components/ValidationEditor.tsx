@@ -4,8 +4,7 @@ import type {
   StringValidationRule,
   NumberValidationRule,
   DateValidationRule,
-  SelectValidationRule,
-  BaseValidationRule
+  SelectValidationRule
 } from '../types/schema';
 
 interface ValidationEditorProps {
@@ -16,7 +15,7 @@ interface ValidationEditorProps {
 export function ValidationEditor({ field, onChange }: ValidationEditorProps) {
   const [showValidation, setShowValidation] = useState(false);
 
-  const updateValidation = (updates: any) => {
+  const updateValidation = (updates: Record<string, unknown>) => {
     const currentValidation = field.validation || {};
     onChange({
       validation: {
@@ -226,7 +225,7 @@ export function ValidationEditor({ field, onChange }: ValidationEditorProps) {
 
   const renderSelectValidation = () => {
     const validation = field.validation as SelectValidationRule;
-    const isMultiple = (field as any).multiple;
+    const isMultiple = 'multiple' in field && (field as { multiple?: boolean }).multiple;
 
     if (!isMultiple) return null;
 

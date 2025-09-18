@@ -12,9 +12,7 @@ export function DataDashboard() {
     isLoading,
     error,
     loadSubmissions,
-    deleteSubmission,
-    exportSubmissions,
-    getSubmissionStats
+    deleteSubmission
   } = useSubmissionManager();
 
   const { schemas, loadSchemas, getSchema } = useSchemaManager();

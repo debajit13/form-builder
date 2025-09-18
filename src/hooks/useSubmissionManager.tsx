@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { FormSubmission, FormSubmissionData } from '../types/schema';
@@ -14,7 +15,7 @@ interface SubmissionManagerContextType {
   deleteSubmission: (id: string) => Promise<void>;
   clearSubmissions: (formId?: string) => Promise<void>;
   loadSubmissions: () => Promise<void>;
-  exportSubmissions: (formId?: string) => any;
+  exportSubmissions: (formId?: string) => FormSubmission[];
   getSubmissionStats: (formId: string) => {
     total: number;
     today: number;
@@ -36,7 +37,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       setError(null);
 
       const loadedSubmissions = storage.getSubmissions();
-      setSubmissions(loadedSubmissions as any);
+      setSubmissions(loadedSubmissions as FormSubmission[]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load submissions';
       setError(errorMessage);
@@ -68,10 +69,10 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
         validationErrors: []
       };
 
-      storage.saveSubmission(submission as any);
+      storage.saveSubmission(submission as FormSubmission);
 
       // Update local state
-      setSubmissions(prev => [...prev, submission as any]);
+      setSubmissions(prev => [...prev, submission as FormSubmission]);
 
       return submission;
     } catch (err) {
@@ -109,7 +110,7 @@ export function SubmissionManagerProvider({ children }: { children: ReactNode })
       if (formId) {
         // Clear submissions for specific form
         const remainingSubmissions = submissions.filter(s => s.formId !== formId);
-        storage.saveSubmissions(remainingSubmissions as any);
+        storage.saveSubmissions(remainingSubmissions as FormSubmission[]);
         setSubmissions(remainingSubmissions);
       } else {
         // Clear all submissions

@@ -13,7 +13,7 @@ import type {
 export class SchemaValidator {
   static validateField(
     field: FieldSchema,
-    value: any,
+    value: unknown,
     allValues?: FormSubmissionData
   ): ValidationError | null {
     try {
@@ -61,7 +61,7 @@ export class SchemaValidator {
 
   static validateFieldAsync(
     field: FieldSchema,
-    value: any,
+    value: unknown,
     allValues?: FormSubmissionData
   ): Promise<ValidationError | null> {
     return new Promise((resolve) => {
@@ -69,8 +69,8 @@ export class SchemaValidator {
       setTimeout(() => resolve(result), 0);
     });
   }
-  static createFieldValidator(field: FieldSchema): z.ZodType<any> {
-    let validator: z.ZodType<any>;
+  static createFieldValidator(field: FieldSchema): z.ZodType<unknown> {
+    let validator: z.ZodType<unknown>;
 
     switch (field.type) {
       case 'text':
@@ -97,24 +97,24 @@ export class SchemaValidator {
       case 'select':
       case 'radio':
         validator = this.createSelectValidator(
-          field as any,
+          field as FieldSchema & { options: { value: string; label: string }[]; multiple?: boolean },
           field.validation as SelectValidationRule
         );
         break;
 
       case 'checkbox':
-        validator = field.options
+        validator = (field as FieldSchema & { options?: unknown[] }).options
           ? z.array(z.string()).optional()
           : z.boolean().optional();
         break;
 
       default:
-        validator = z.any();
+        validator = z.unknown();
     }
 
     // Apply required validation
     if (field.validation?.required) {
-      if (field.type === 'checkbox' && !field.options) {
+      if (field.type === 'checkbox' && !(field as FieldSchema & { options?: unknown[] }).options) {
         validator = z.boolean().refine((val) => val === true, {
           message: field.validation?.message || `${field.label} is required`,
         });
@@ -179,7 +179,7 @@ export class SchemaValidator {
 
     if (validation?.format === 'phone') {
       validator = validator.regex(
-        /^[\+]?[1-9][\d]{0,15}$/,
+        /^[+]?[1-9][\d]{0,15}$/,
         {
           message: validation?.message || 'Invalid phone number format',
         }
@@ -246,10 +246,10 @@ export class SchemaValidator {
   }
 
   private static createSelectValidator(
-    field: any,
+    field: FieldSchema & { options: { value: string; label: string }[]; multiple?: boolean },
     validation?: SelectValidationRule
-  ): z.ZodType<any> {
-    const validValues = field.options.map((opt: any) => opt.value);
+  ): z.ZodType<unknown> {
+    const validValues = field.options.map((opt) => opt.value);
 
     if (field.multiple) {
       let validator = z.array(z.enum(validValues as [string, ...string[]]));
@@ -332,7 +332,13 @@ export class SchemaValidator {
   }
 
   private static evaluateCondition(
-    condition: any,
+    condition: {
+      field: string;
+      operator: string;
+      value: unknown;
+      logic?: string;
+      rules?: unknown[];
+    },
     data: FormSubmissionData
   ): boolean {
     const fieldValue = data[condition.field];
@@ -361,8 +367,14 @@ export class SchemaValidator {
 
     // Handle nested conditions
     if (condition.rules && condition.rules.length > 0) {
-      const nestedResults = condition.rules.map((rule: any) =>
-        this.evaluateCondition(rule, data)
+      const nestedResults = condition.rules.map((rule) =>
+        this.evaluateCondition(rule as {
+          field: string;
+          operator: string;
+          value: unknown;
+          logic?: string;
+          rules?: unknown[];
+        }, data)
       );
 
       if (condition.logic === 'or') {
@@ -393,7 +405,7 @@ export class SchemaValidator {
   }
 
   static createFormValidator(schema: FormSchema) {
-    const shape: Record<string, z.ZodType<any>> = {};
+    const shape: Record<string, z.ZodType<unknown>> = {};
 
     for (const section of schema.sections) {
       for (const field of section.fields) {
@@ -414,7 +426,7 @@ export class SchemaValidator {
     switch (field.type) {
       case 'text':
       case 'email':
-      case 'textarea':
+      case 'textarea': {
         const stringValidation = field.validation as StringValidationRule;
         if (stringValidation?.minLength) {
           rules.push(`Minimum ${stringValidation.minLength} characters`);
@@ -435,8 +447,9 @@ export class SchemaValidator {
           rules.push('Must be a valid phone number');
         }
         break;
+      }
 
-      case 'number':
+      case 'number': {
         const numberValidation = field.validation as NumberValidationRule;
         if (numberValidation?.min !== undefined) {
           rules.push(`Minimum value: ${numberValidation.min}`);
@@ -448,8 +461,9 @@ export class SchemaValidator {
           rules.push('Must be a whole number');
         }
         break;
+      }
 
-      case 'date':
+      case 'date': {
         const dateValidation = field.validation as DateValidationRule;
         if (dateValidation?.minDate) {
           rules.push(`Earliest date: ${new Date(dateValidation.minDate).toLocaleDateString()}`);
@@ -458,9 +472,10 @@ export class SchemaValidator {
           rules.push(`Latest date: ${new Date(dateValidation.maxDate).toLocaleDateString()}`);
         }
         break;
+      }
 
       case 'select':
-      case 'radio':
+      case 'radio': {
         const selectValidation = field.validation as SelectValidationRule;
         if (selectValidation?.minItems) {
           rules.push(`Select at least ${selectValidation.minItems} option(s)`);
@@ -469,12 +484,13 @@ export class SchemaValidator {
           rules.push(`Select at most ${selectValidation.maxItems} option(s)`);
         }
         break;
+      }
     }
 
     return rules;
   }
 
-  static getFieldDisplayValue(field: FieldSchema, value: any): string {
+  static getFieldDisplayValue(field: FieldSchema, value: unknown): string {
     if (value === null || value === undefined || value === '') {
       return '';
     }
@@ -491,38 +507,45 @@ export class SchemaValidator {
         return String(value);
 
       case 'select':
-      case 'radio':
-        const selectField = field as any;
+      case 'radio': {
+        const selectField = field as FieldSchema & { options?: { value: string; label: string }[] };
         if (Array.isArray(value)) {
           return value
             .map(v => {
-              const option = selectField.options?.find((opt: any) => opt.value === v);
+              const option = selectField.options?.find((opt) => opt.value === v);
               return option?.label || v;
             })
             .join(', ');
         }
-        const option = selectField.options?.find((opt: any) => opt.value === value);
-        return option?.label || value;
+        const option = selectField.options?.find((opt) => opt.value === value);
+        return option?.label || String(value);
+      }
 
-      case 'checkbox':
-        const checkboxField = field as any;
+      case 'checkbox': {
+        const checkboxField = field as FieldSchema & { options?: { value: string; label: string }[] };
         if (checkboxField.options && Array.isArray(value)) {
           return value
             .map(v => {
-              const option = checkboxField.options?.find((opt: any) => opt.value === v);
+              const option = checkboxField.options?.find((opt) => opt.value === v);
               return option?.label || v;
             })
             .join(', ');
         }
         return value ? 'Yes' : 'No';
+      }
 
-      case 'number':
-        const numberField = field as any;
+      case 'number': {
+        const numberField = field as FieldSchema & {
+          prefix?: string;
+          suffix?: string;
+          unit?: string;
+        };
         let displayValue = String(value);
         if (numberField.prefix) displayValue = numberField.prefix + displayValue;
         if (numberField.suffix) displayValue += numberField.suffix;
         if (numberField.unit) displayValue += ' ' + numberField.unit;
         return displayValue;
+      }
 
       default:
         return String(value);

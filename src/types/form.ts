@@ -29,7 +29,7 @@ export interface FormData {
 export interface FormSubmission {
   id: string;
   formId: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   submittedAt: Date;
 }
 

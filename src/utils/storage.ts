@@ -1,5 +1,5 @@
 import type { FormData, FormSubmission } from '../types/form';
-import type { FormSchema, FormSubmissionData } from '../types/schema';
+import type { FormSchema } from '../types/schema';
 
 const FORMS_KEY = 'dynamic-forms';
 const SUBMISSIONS_KEY = 'form-submissions';
@@ -198,7 +198,11 @@ class StorageManager {
 
   getSubmissionsByDateRange(formId: string, startDate: Date, endDate: Date): FormSubmission[] {
     return this.getSubmissions(formId).filter(submission => {
-      const submittedAt = new Date((submission as any).metadata?.submittedAt || (submission as any).submittedAt);
+      const submissionWithMetadata = submission as FormSubmission & {
+        metadata?: { submittedAt?: string };
+        submittedAt?: string;
+      };
+      const submittedAt = new Date(submissionWithMetadata.metadata?.submittedAt || submissionWithMetadata.submittedAt || '');
       return submittedAt >= startDate && submittedAt <= endDate;
     });
   }
@@ -253,8 +257,8 @@ class StorageManager {
   private getTotalStorageSize(): number {
     try {
       let total = 0;
-      for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
+      for (const key in localStorage) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
           total += localStorage[key].length;
         }
       }
@@ -279,30 +283,30 @@ class StorageManager {
     }
   }
 
-  importData(data: any): { success: boolean; errors: string[] } {
+  importData(data: unknown): { success: boolean; errors: string[] } {
     const errors: string[] = [];
 
     try {
-      if (data.schemas && Array.isArray(data.schemas)) {
-        this.safeSetItem(SCHEMAS_KEY, JSON.stringify(data.schemas));
+      if (typeof data === 'object' && data !== null && 'schemas' in data && Array.isArray((data as { schemas: unknown }).schemas)) {
+        this.safeSetItem(SCHEMAS_KEY, JSON.stringify((data as { schemas: unknown }).schemas));
       }
-    } catch (error) {
+    } catch {
       errors.push('Failed to import schemas');
     }
 
     try {
-      if (data.submissions && Array.isArray(data.submissions)) {
-        this.safeSetItem(SUBMISSIONS_KEY, JSON.stringify(data.submissions));
+      if (typeof data === 'object' && data !== null && 'submissions' in data && Array.isArray((data as { submissions: unknown }).submissions)) {
+        this.safeSetItem(SUBMISSIONS_KEY, JSON.stringify((data as { submissions: unknown }).submissions));
       }
-    } catch (error) {
+    } catch {
       errors.push('Failed to import submissions');
     }
 
     try {
-      if (data.forms && Array.isArray(data.forms)) {
-        this.safeSetItem(FORMS_KEY, JSON.stringify(data.forms));
+      if (typeof data === 'object' && data !== null && 'forms' in data && Array.isArray((data as { forms: unknown }).forms)) {
+        this.safeSetItem(FORMS_KEY, JSON.stringify((data as { forms: unknown }).forms));
       }
-    } catch (error) {
+    } catch {
       errors.push('Failed to import forms');
     }
 

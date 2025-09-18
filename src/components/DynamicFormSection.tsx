@@ -98,7 +98,7 @@ export function DynamicFormSection({
 
       {/* Section Fields */}
       <div
-        className={`grid gap-4 sm:gap-6 ${getGridColumns(visibleFields.length, theme)}`}
+        className={`grid gap-4 sm:gap-6 ${getGridColumns(visibleFields.length)}`}
         style={{
           gap: theme?.spacing === 'compact' ? '0.75rem' : theme?.spacing === 'relaxed' ? '2rem' : '1.5rem'
         }}
@@ -168,7 +168,7 @@ function shouldShowField(field: FieldSchema, watchedValues: FormSubmissionData):
 }
 
 // Helper function to determine grid layout
-function getGridColumns(fieldCount: number, theme?: FormTheme): string {
+function getGridColumns(fieldCount: number): string {
   // Consider responsive breakpoints and field density
   if (fieldCount === 1) return 'grid-cols-1';
   if (fieldCount === 2) return 'grid-cols-1 sm:grid-cols-2';

@@ -264,7 +264,7 @@ const validatedFormSchema: FormSchema = {
 };
 
 export function ValidatedFormExample() {
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Record<string, unknown>) => {
     console.log('Form submitted with data:', data);
 
     // Simulate API call
@@ -273,7 +273,7 @@ export function ValidatedFormExample() {
     alert('Form submitted successfully! Check the console for submitted data.');
   };
 
-  const handleDraft = (data: any) => {
+  const handleDraft = (data: Record<string, unknown>) => {
     console.log('Draft saved:', data);
     alert('Draft saved successfully!');
   };

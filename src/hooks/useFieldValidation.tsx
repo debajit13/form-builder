@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { z } from 'zod';
-import type { FieldSchema, ValidationError } from '../types/schema';
+import type { FieldSchema } from '../types/schema';
 import { SchemaValidator } from '../utils/validation';
 
 interface ValidationState {
@@ -12,8 +12,8 @@ interface ValidationState {
 
 interface UseFieldValidationProps {
   field: FieldSchema;
-  value: any;
-  formData?: Record<string, any>;
+  value: unknown;
+  formData?: Record<string, unknown>;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
   debounceMs?: number;
@@ -36,7 +36,7 @@ export function useFieldValidation({
 
   const [debounceTimer, setDebounceTimer] = useState<number | null>(null);
 
-  const validateField = useCallback(async (currentValue: any, immediate = false) => {
+  const validateField = useCallback(async (currentValue: unknown, immediate = false) => {
     // Clear existing timer
     if (debounceTimer) {
       clearTimeout(debounceTimer);
@@ -165,7 +165,7 @@ export function useFieldValidation({
 }
 
 // Helper function to evaluate conditional logic
-function evaluateConditional(conditional: any, formData: Record<string, any>): boolean {
+function evaluateConditional(conditional: unknown, formData: Record<string, unknown>): boolean {
   const fieldValue = formData[conditional.field];
 
   let result = false;
@@ -194,7 +194,7 @@ function evaluateConditional(conditional: any, formData: Record<string, any>): b
 
   // Handle nested conditions
   if (conditional.rules && conditional.rules.length > 0) {
-    const nestedResults = conditional.rules.map((rule: any) =>
+    const nestedResults = (conditional as { rules: unknown[] }).rules.map((rule: unknown) =>
       evaluateConditional(rule, formData)
     );
 
@@ -215,17 +215,17 @@ function getDefaultErrorMessage(field: FieldSchema, errorCode: string): string {
   switch (errorCode) {
     case 'too_small':
       if (field.type === 'text' || field.type === 'textarea') {
-        return `${fieldLabel} must be at least ${(field.validation as any)?.minLength} characters`;
+        return `${fieldLabel} must be at least ${(field.validation as { minLength?: number })?.minLength} characters`;
       } else if (field.type === 'number') {
-        return `${fieldLabel} must be at least ${(field.validation as any)?.min}`;
+        return `${fieldLabel} must be at least ${(field.validation as { min?: number })?.min}`;
       }
       return `${fieldLabel} is too small`;
 
     case 'too_big':
       if (field.type === 'text' || field.type === 'textarea') {
-        return `${fieldLabel} must be at most ${(field.validation as any)?.maxLength} characters`;
+        return `${fieldLabel} must be at most ${(field.validation as { maxLength?: number })?.maxLength} characters`;
       } else if (field.type === 'number') {
-        return `${fieldLabel} must be at most ${(field.validation as any)?.max}`;
+        return `${fieldLabel} must be at most ${(field.validation as { max?: number })?.max}`;
       }
       return `${fieldLabel} is too large`;
 

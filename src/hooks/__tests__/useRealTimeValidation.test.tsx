@@ -36,7 +36,7 @@ describe('useRealTimeValidation', () => {
       required: true,
       minLength: 3,
     },
-  } as any
+  } as FieldSchema
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -328,7 +328,7 @@ describe('useFormValidation', () => {
       label: 'Field 2',
       validation: { required: true },
     },
-  ] as any[]
+  ] as FieldSchema[]
 
   beforeEach(() => {
     vi.clearAllMocks()

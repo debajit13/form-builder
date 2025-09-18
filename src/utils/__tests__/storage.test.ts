@@ -40,7 +40,7 @@ describe('Storage Utilities', () => {
               type: 'text',
               label: 'First Name',
               validation: { required: true }
-            } as any
+            } as FormSchema['sections'][0]['fields'][0]
           ]
         }
       ],
@@ -248,7 +248,7 @@ describe('Storage Utilities', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       expect(() => {
-        storage.saveSchema(null as any)
+        storage.saveSchema(null as unknown as FormSchema)
       }).toThrow('Failed to save schema')
 
       consoleSpy.mockRestore()
@@ -276,7 +276,7 @@ describe('Storage Utilities', () => {
           status: 'draft',
           createdBy: 'test-user'
         }
-      } as any
+      } as FormSubmission
 
       expect(() => {
         storage.saveSchema(baseSchema)

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormBuilder } from '../FormBuilder'
 import type { FormSchema } from '../../types/schema'
@@ -62,7 +62,7 @@ vi.mock('../../utils/schemaHelpers', () => ({
 }))
 
 vi.mock('../FieldEditor', () => ({
-  FieldEditor: ({ field, onChange }: { field: any; onChange: (updates: any) => void }) => (
+  FieldEditor: ({ field, onChange }: { field: { label?: string }; onChange: (updates: Record<string, unknown>) => void }) => (
     <div data-testid="field-editor">
       <h4>Editing: {field?.label || 'Unknown Field'}</h4>
       <input
@@ -77,15 +77,13 @@ vi.mock('../FieldEditor', () => ({
 vi.mock('../SectionEditor', () => ({
   SectionEditor: ({
     section,
-    index,
     onSectionChange,
     onDeleteSection,
     onAddField,
     onEditField,
   }: {
-    section: any
-    index: number
-    onSectionChange: (updates: any) => void
+    section: { id: string; title: string; fields: { id: string; label: string }[] }
+    onSectionChange: (updates: Record<string, unknown>) => void
     onDeleteSection: () => void
     onAddField: () => void
     onEditField: (fieldId: string) => void
@@ -103,7 +101,7 @@ vi.mock('../SectionEditor', () => ({
       <button data-testid={`delete-section-${section.id}`} onClick={onDeleteSection}>
         Delete Section
       </button>
-      {section.fields.map((field: any) => (
+      {section.fields.map((field: { id: string; label: string }) => (
         <div key={field.id} data-testid={`field-${field.id}`}>
           <span>{field.label}</span>
           <button onClick={() => onEditField(field.id)}>Edit Field</button>
@@ -114,7 +112,7 @@ vi.mock('../SectionEditor', () => ({
 }))
 
 vi.mock('../SchemaPreview', () => ({
-  SchemaPreview: ({ schema }: { schema: any }) => (
+  SchemaPreview: ({ schema }: { schema: { title: string; description: string } }) => (
     <div data-testid="schema-preview">
       <h2>Preview: {schema.title}</h2>
       <p>{schema.description}</p>
@@ -145,7 +143,7 @@ describe('FormBuilder', () => {
             name: 'testField',
             type: 'text',
             label: 'Test Field',
-          } as any,
+          } as FormSchema['sections'][0]['fields'][0],
         ],
       },
     ],
@@ -162,7 +160,7 @@ describe('FormBuilder', () => {
       status: 'draft',
       createdBy: 'user',
     },
-  } as any
+  } as FormSchema
 
   beforeEach(() => {
     vi.clearAllMocks()

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { SchemaValidator } from '../validation'
-import type { FieldSchema, TextFieldSchema, NumberFieldSchema } from '../../types/schema'
+import type { FieldSchema, TextFieldSchema, NumberFieldSchema, FormSchema } from '../../types/schema'
 
 describe('SchemaValidator', () => {
   describe('Text Field Validation', () => {
@@ -140,7 +140,7 @@ describe('SchemaValidator', () => {
       validation: {
         required: true
       }
-    } as any
+    } as FieldSchema
 
     it('should validate select field options', () => {
       const validator = SchemaValidator.createFieldValidator(selectField)
@@ -154,7 +154,7 @@ describe('SchemaValidator', () => {
       const multiSelectField = {
         ...selectField,
         multiple: true
-      } as any
+      } as FieldSchema
       const validator = SchemaValidator.createFieldValidator(multiSelectField)
 
       expect(validator.parse(['us', 'ca'])).toEqual(['us', 'ca'])
@@ -171,7 +171,7 @@ describe('SchemaValidator', () => {
       validation: {
         required: true
       }
-    } as any
+    } as FieldSchema
 
     it('should validate checkbox field', () => {
       const validator = SchemaValidator.createFieldValidator(checkboxField)
@@ -184,7 +184,7 @@ describe('SchemaValidator', () => {
       const optionalCheckbox = {
         ...checkboxField,
         validation: { required: false }
-      } as any
+      } as FieldSchema
       const validator = SchemaValidator.createFieldValidator(optionalCheckbox)
 
       expect(validator.parse(false)).toBe(false)
@@ -201,7 +201,7 @@ describe('SchemaValidator', () => {
       validation: {
         required: true
       }
-    } as any
+    } as FieldSchema
 
     it('should validate date field', () => {
       const validator = SchemaValidator.createFieldValidator(dateField)
@@ -242,7 +242,7 @@ describe('SchemaValidator', () => {
     }
 
     it('should validate complete form data', () => {
-      const validator = SchemaValidator.createFormValidator(formSchema as any)
+      const validator = SchemaValidator.createFormValidator(formSchema as FormSchema)
 
       const validData = {
         name: 'John Doe',
@@ -253,7 +253,7 @@ describe('SchemaValidator', () => {
     })
 
     it('should catch validation errors in form data', () => {
-      const validator = SchemaValidator.createFormValidator(formSchema as any)
+      const validator = SchemaValidator.createFormValidator(formSchema as FormSchema)
 
       const invalidData = {
         name: '', // required but empty
@@ -264,7 +264,7 @@ describe('SchemaValidator', () => {
     })
 
     it('should handle missing fields', () => {
-      const validator = SchemaValidator.createFormValidator(formSchema as any)
+      const validator = SchemaValidator.createFormValidator(formSchema as FormSchema)
 
       const incompleteData = {
         name: 'John Doe'
@@ -312,13 +312,13 @@ describe('SchemaValidator', () => {
 
       try {
         validator.parse('')
-      } catch (error: any) {
+      } catch (error: unknown) {
         expect(error.issues[0].message).toContain('at least 5')
       }
 
       try {
         validator.parse('abc')
-      } catch (error: any) {
+      } catch (error: unknown) {
         expect(error.issues[0].message).toContain('at least 5')
       }
     })

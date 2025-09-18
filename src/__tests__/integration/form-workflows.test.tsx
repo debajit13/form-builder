@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { FormProvider, useForm } from 'react-hook-form'
 import { DynamicFormGenerator } from '../../components/DynamicFormGenerator'
 import { FormBuilder } from '../../components/FormBuilder'
 import type { FormSchema } from '../../types/schema'
@@ -23,8 +22,8 @@ vi.mock('../../utils/storage', () => ({
   },
 }))
 
-vi.mock('../../utils/validation', () => {
-  const { z } = require('zod')
+vi.mock('../../utils/validation', async () => {
+  const { z } = await import('zod')
   return {
     SchemaValidator: {
       createFormValidator: vi.fn(() => z.object({
@@ -44,14 +43,14 @@ vi.mock('uuid', () => ({
 
 // Mock all child components to focus on integration
 vi.mock('../../components/DynamicFormSection', () => ({
-  DynamicFormSection: ({ section, register, errors }: { section: any; register: any; errors: any }) => (
+  DynamicFormSection: ({ section, register, errors }: { section: { id: string; title: string; fields: Array<{ id: string; name: string; label: string; type: string }> }; register: unknown; errors: unknown }) => (
     <div data-testid={`section-${section.id}`}>
       <h3>{section.title}</h3>
-      {section.fields.map((field: any) => (
+      {section.fields.map((field) => (
         <div key={field.id}>
           <label htmlFor={field.name}>{field.label}</label>
           <input
-            {...(register ? register(field.name) : {})}
+            {...(register && typeof register === 'function' ? register(field.name) : {})}
             id={field.name}
             name={field.name}
             type={field.type === 'email' ? 'email' : 'text'}
@@ -67,7 +66,7 @@ vi.mock('../../components/DynamicFormSection', () => ({
 }))
 
 vi.mock('../../components/FormProgressIndicator', () => ({
-  FormProgressIndicator: ({ steps, currentStep }: { steps: any[]; currentStep: number }) => (
+  FormProgressIndicator: ({ steps, currentStep }: { steps: unknown[]; currentStep: number }) => (
     <div data-testid="progress-indicator">
       Step {currentStep + 1} of {steps.length}
     </div>
@@ -75,7 +74,7 @@ vi.mock('../../components/FormProgressIndicator', () => ({
 }))
 
 vi.mock('../../components/FormSubmissionResult', () => ({
-  FormSubmissionResult: ({ result, onStartOver }: { result: any; onStartOver: () => void }) => (
+  FormSubmissionResult: ({ result, onStartOver }: { result: { success: boolean; message: string }; onStartOver: () => void }) => (
     <div data-testid="submission-result">
       <h2>{result.success ? 'Success!' : 'Error!'}</h2>
       <p>{result.message}</p>
@@ -85,7 +84,7 @@ vi.mock('../../components/FormSubmissionResult', () => ({
 }))
 
 vi.mock('../../components/FieldEditor', () => ({
-  FieldEditor: ({ field, onChange }: { field: any; onChange: (updates: any) => void }) => (
+  FieldEditor: ({ field, onChange }: { field: { label?: string; type?: string }; onChange: (updates: Record<string, unknown>) => void }) => (
     <div data-testid="field-editor">
       <h4>Editing: {field?.label || 'Unknown Field'}</h4>
       <input
@@ -115,8 +114,8 @@ vi.mock('../../components/SectionEditor', () => ({
     onEditField,
     onDeleteField,
   }: {
-    section: any
-    onSectionChange: (updates: any) => void
+    section: { id: string; title: string; fields: Array<{ id: string; label: string }> }
+    onSectionChange: (updates: Record<string, unknown>) => void
     onDeleteSection: () => void
     onAddField: () => void
     onEditField: (fieldId: string) => void
@@ -134,7 +133,7 @@ vi.mock('../../components/SectionEditor', () => ({
       <button data-testid={`delete-section-${section.id}`} onClick={onDeleteSection}>
         Delete Section
       </button>
-      {section.fields.map((field: any) => (
+      {section.fields.map((field) => (
         <div key={field.id} data-testid={`field-item-${field.id}`}>
           <span>{field.label}</span>
           <button onClick={() => onEditField(field.id)}>Edit</button>
@@ -146,15 +145,15 @@ vi.mock('../../components/SectionEditor', () => ({
 }))
 
 vi.mock('../../components/SchemaPreview', () => ({
-  SchemaPreview: ({ schema }: { schema: any }) => (
+  SchemaPreview: ({ schema }: { schema: { title: string; description: string; sections: Array<{ id: string; title: string; fields: Array<{ id: string; label: string }> }> } }) => (
     <div data-testid="schema-preview">
       <h2>Preview: {schema.title}</h2>
       <p>{schema.description}</p>
       <div data-testid="preview-sections">
-        {schema.sections.map((section: any) => (
+        {schema.sections.map((section) => (
           <div key={section.id}>
             <h3>{section.title}</h3>
-            {section.fields.map((field: any) => (
+            {section.fields.map((field) => (
               <div key={field.id}>{field.label}</div>
             ))}
           </div>
@@ -237,7 +236,7 @@ describe('Form Workflows Integration', () => {
       status: 'published',
       createdBy: 'user',
     },
-  } as any
+  } as FormSchema
 
   const multiStepSchema: FormSchema = {
     ...mockSchema,

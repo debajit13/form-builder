@@ -108,9 +108,9 @@ export class SectionBuilder {
       label,
       type: 'text',
       ...options
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -125,9 +125,9 @@ export class SectionBuilder {
       label,
       type: 'email',
       ...options
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -142,9 +142,9 @@ export class SectionBuilder {
       label,
       type: 'number',
       ...options
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -159,9 +159,9 @@ export class SectionBuilder {
       label,
       type: 'date',
       ...options
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -178,9 +178,9 @@ export class SectionBuilder {
       type: 'select',
       options,
       ...fieldOptions
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -196,9 +196,9 @@ export class SectionBuilder {
       type: 'textarea',
       multiline: true,
       ...options
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -215,9 +215,9 @@ export class SectionBuilder {
       type: 'checkbox',
       options,
       ...fieldOptions
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 
@@ -234,9 +234,9 @@ export class SectionBuilder {
       type: 'radio',
       options,
       ...fieldOptions
-    } as any;
+    } as FieldSchema;
 
-    this.section.fields.push(field as any);
+    this.section.fields.push(field as FieldSchema);
     return this;
   }
 }

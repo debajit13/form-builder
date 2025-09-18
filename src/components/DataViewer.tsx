@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import type { FormSubmission, FormSchema } from '../types/schema';
+import type { FormSubmission } from '../types/schema';
 import { useSubmissionManager } from '../hooks/useSubmissionManager';
 import { useSchemaManager } from '../hooks/useSchemaManager';
 
@@ -74,8 +74,8 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
 
     // Sort data
     filtered.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number | Date;
+      let bValue: string | number | Date;
 
       if (sortConfig.field === 'submittedAt') {
         aValue = new Date(a.metadata.submittedAt);
@@ -161,7 +161,7 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
     return new Date(dateString).toLocaleString();
   };
 
-  const formatValue = (value: any) => {
+  const formatValue = (value: unknown) => {
     if (value === null || value === undefined) return '-';
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (Array.isArray(value)) return value.join(', ');

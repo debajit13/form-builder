@@ -36,7 +36,7 @@ describe('DataManager', () => {
                 name: 'firstName',
                 type: 'text',
                 label: 'First Name'
-              } as any
+              } as FormSchema['sections'][0]['fields'][0]
             ]
           }
         ],
@@ -260,8 +260,8 @@ describe('DataManager', () => {
     ]
 
     beforeEach(() => {
-      (storage.getSchemas as any).mockReturnValue(mockSchemas);
-      (storage.getSubmissions as any).mockReturnValue(mockSubmissions)
+      (storage.getSchemas as ReturnType<typeof vi.fn>).mockReturnValue(mockSchemas);
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue(mockSubmissions)
     })
 
     it('should export all data by default', () => {
@@ -374,8 +374,8 @@ describe('DataManager', () => {
         }]
       }
 
-      ;(storage.getSchemas as any).mockReturnValue([]);
-      (storage.getSubmissions as any).mockReturnValue([])
+      ;(storage.getSchemas as ReturnType<typeof vi.fn>).mockReturnValue([]);
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue([])
 
       const result = await DataManager.importData(JSON.stringify(validData))
 
@@ -419,8 +419,8 @@ describe('DataManager', () => {
         ]
       }
 
-      ;(storage.getSchemas as any).mockReturnValue([]);
-      (storage.getSubmissions as any).mockReturnValue([])
+      ;(storage.getSchemas as ReturnType<typeof vi.fn>).mockReturnValue([]);
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue([])
 
       const result = await DataManager.importData(JSON.stringify(mixedData))
 
@@ -457,7 +457,7 @@ describe('DataManager', () => {
         }
       ];
 
-      (storage.getSubmissions as any).mockReturnValue(oldSubmissions)
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue(oldSubmissions)
 
       const daysToKeep = 30
       const deletedCount = DataManager.cleanupOldSubmissions(daysToKeep)
@@ -478,7 +478,7 @@ describe('DataManager', () => {
         }
       ];
 
-      (storage.getSubmissions as any).mockReturnValue(recentSubmissions)
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue(recentSubmissions)
 
       const deletedCount = DataManager.cleanupOldSubmissions(30)
 
@@ -507,7 +507,7 @@ describe('DataManager', () => {
         }
       ];
 
-      (storage.getSubmissions as any).mockReturnValue(submissions)
+      (storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue(submissions)
 
       const analytics = DataManager.getAnalytics()
 
@@ -519,7 +519,7 @@ describe('DataManager', () => {
     })
 
     it('should handle empty submissions for analytics', () => {
-      ;(storage.getSubmissions as any).mockReturnValue([])
+      ;(storage.getSubmissions as ReturnType<typeof vi.fn>).mockReturnValue([])
 
       const analytics = DataManager.getAnalytics()
 

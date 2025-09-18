@@ -95,7 +95,7 @@ export function FormPreviewPage() {
         validationErrors: []
       }
 
-      storage.saveSubmission(submission as any)
+      storage.saveSubmission(submission as FormSubmission)
 
       setSubmissionResult({
         success: true,
@@ -317,6 +317,7 @@ export function FormPreviewPage() {
             onSubmit={handleFormSubmit}
             showValidation={true}
             realTimeValidation={true}
+            saveToStorage={false}
           />
         </div>
       )}

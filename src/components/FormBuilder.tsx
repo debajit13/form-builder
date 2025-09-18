@@ -75,7 +75,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   };
 
   const handleDeleteSection = (sectionId: string) => {
-    if (!confirm('Are you sure you want to delete this section?')) return;
+    if (!window.confirm('Are you sure you want to delete this section?')) return;
 
     setCurrentSchema(prev => ({
       ...prev,
@@ -120,7 +120,7 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
   };
 
   const handleDeleteField = (sectionId: string, fieldId: string) => {
-    if (!confirm('Are you sure you want to delete this field?')) return;
+    if (!window.confirm('Are you sure you want to delete this field?')) return;
 
     setCurrentSchema(prev => ({
       ...prev,
