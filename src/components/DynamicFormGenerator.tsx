@@ -8,6 +8,7 @@ import { FormProgressIndicator } from './FormProgressIndicator';
 import { FormSubmissionResult } from './FormSubmissionResult';
 import { storage } from '../utils/storage';
 import { v4 as uuidv4 } from 'uuid';
+import { getLayoutConfig } from '../utils/layoutUtils';
 
 interface DynamicFormGeneratorProps {
   schema: FormSchema;
@@ -260,9 +261,12 @@ export function DynamicFormGenerator({
     );
   }
 
+  // Get layout configuration
+  const layoutConfig = getLayoutConfig(schema.settings.theme?.layout);
+
   return (
     <FormProvider {...methods}>
-      <div className={`max-w-4xl mx-auto ${className}`}>
+      <div className={`${layoutConfig.containerClasses} ${className}`} style={layoutConfig.containerStyle}>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
           {/* Form Header */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-gray-900/10 overflow-hidden">
@@ -331,7 +335,7 @@ export function DynamicFormGenerator({
                 />
               ) : (
                 // Single page: Show all sections
-                <div className="space-y-8">
+                <div className={layoutConfig.sectionClasses} style={layoutConfig.sectionStyle}>
                   {schema.sections.map((section) => (
                     <DynamicFormSection
                       key={section.id}

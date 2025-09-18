@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import type { FormSchema, FormSection, FieldSchema } from '../types/schema';
+import type { FormSchema, FormSection, FieldSchema, FormLayout } from '../types/schema';
 import { SchemaBuilder } from '../utils/schemaHelpers';
 import { storage } from '../utils/storage';
 import { FieldEditor } from './FieldEditor';
 import { SectionEditor } from './SectionEditor';
 import { SchemaPreview } from './SchemaPreview';
+import { LayoutSelector } from './LayoutSelector';
 
 interface FormBuilderProps {
   schema?: FormSchema;
@@ -47,6 +48,23 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
       metadata: {
         ...prev.metadata,
         ...updates.metadata,
+        updatedAt: new Date().toISOString()
+      }
+    }));
+  };
+
+  const handleLayoutChange = (layout: FormLayout) => {
+    setCurrentSchema(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        theme: {
+          ...prev.settings.theme,
+          layout
+        }
+      },
+      metadata: {
+        ...prev.metadata,
         updatedAt: new Date().toISOString()
       }
     }));
@@ -359,12 +377,29 @@ export function FormBuilder({ schema, onSave, onCancel }: FormBuilderProps) {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10 p-4 sm:p-6 text-center">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
-                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No field selected</h3>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Click on a field to edit its properties.</p>
+                <div className="space-y-6">
+                  {/* Layout Settings */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10">
+                    <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Layout Settings</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Choose how your form fields are arranged</p>
+                    </div>
+                    <div className="p-4 sm:p-6">
+                      <LayoutSelector
+                        currentLayout={currentSchema.settings.theme?.layout}
+                        onLayoutChange={handleLayoutChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Field Editor Placeholder */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/10 p-4 sm:p-6 text-center">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No field selected</h3>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Click on a field to edit its properties.</p>
+                  </div>
                 </div>
               )}
             </div>

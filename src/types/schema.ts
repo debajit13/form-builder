@@ -130,12 +130,30 @@ export interface FormSettings {
   notifications?: NotificationSettings;
 }
 
+export type FormLayoutType = 'single-column' | 'two-column' | 'grid' | 'horizontal' | 'card' | 'wizard';
+
+export interface FormLayout {
+  type: FormLayoutType;
+  settings?: {
+    columnsPerRow?: number; // For grid layout
+    cardSpacing?: 'sm' | 'md' | 'lg'; // For card layout
+    fieldAlignment?: 'left' | 'center' | 'right'; // For horizontal layout
+    sectionSpacing?: 'compact' | 'normal' | 'relaxed';
+    responsiveBreakpoints?: {
+      mobile?: number; // columns on mobile
+      tablet?: number; // columns on tablet
+      desktop?: number; // columns on desktop
+    };
+  };
+}
+
 export interface FormTheme {
   primaryColor?: string;
   secondaryColor?: string;
   fontSize?: 'sm' | 'md' | 'lg';
   spacing?: 'compact' | 'normal' | 'relaxed';
   borderRadius?: 'none' | 'sm' | 'md' | 'lg';
+  layout?: FormLayout;
 }
 
 export interface NotificationSettings {

@@ -1,5 +1,6 @@
 import type { FormSection, FieldSchema, FormTheme, ConditionalRule, FormSubmissionData } from '../types/schema';
 import { DynamicFormField } from './DynamicFormField';
+import { getFieldLayoutClasses, getSpacingClasses } from '../utils/layoutUtils';
 
 interface DynamicFormSectionProps {
   section: FormSection;
@@ -76,10 +77,22 @@ export function DynamicFormSection({
     return null;
   }
 
+  // Get layout configuration
+  const layout = theme?.layout;
+  const layoutType = layout?.type || 'grid';
+  const spacing = getSpacingClasses(theme?.spacing);
+  const fieldClasses = getFieldLayoutClasses(layoutType, visibleFields.length, layout?.settings);
+
+  // Apply card styling for card layout
+  const isCardLayout = layoutType === 'card';
+  const sectionClasses = isCardLayout
+    ? `${spacing} bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6`
+    : spacing;
+
   return (
-    <section className="space-y-4 sm:space-y-6" aria-labelledby={`section-${section.id}`}>
+    <section className={sectionClasses} aria-labelledby={`section-${section.id}`}>
       {/* Section Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 pb-3 sm:pb-4">
+      <div className={`${isCardLayout ? 'mb-6' : 'border-b border-gray-200 dark:border-gray-700 pb-3 sm:pb-4'}`}>
         <h2
           id={`section-${section.id}`}
           className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white leading-tight"
@@ -98,7 +111,7 @@ export function DynamicFormSection({
 
       {/* Section Fields */}
       <div
-        className={`grid gap-4 sm:gap-6 ${getGridColumns(visibleFields.length)}`}
+        className={fieldClasses}
         style={{
           gap: theme?.spacing === 'compact' ? '0.75rem' : theme?.spacing === 'relaxed' ? '2rem' : '1.5rem'
         }}
@@ -167,14 +180,3 @@ function shouldShowField(field: FieldSchema, watchedValues: FormSubmissionData):
   return result;
 }
 
-// Helper function to determine grid layout
-function getGridColumns(fieldCount: number): string {
-  // Consider responsive breakpoints and field density
-  if (fieldCount === 1) return 'grid-cols-1';
-  if (fieldCount === 2) return 'grid-cols-1 sm:grid-cols-2';
-  if (fieldCount === 3) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
-  if (fieldCount <= 6) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
-
-  // For many fields, use responsive grid with better mobile handling
-  return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
-}

@@ -74,7 +74,19 @@ export class SchemaBuilder {
         primaryColor: '#3b82f6',
         fontSize: 'md',
         spacing: 'normal',
-        borderRadius: 'md'
+        borderRadius: 'md',
+        layout: {
+          type: 'grid',
+          settings: {
+            columnsPerRow: 3,
+            sectionSpacing: 'normal',
+            responsiveBreakpoints: {
+              mobile: 1,
+              tablet: 2,
+              desktop: 3
+            }
+          }
+        }
       }
     };
   }
