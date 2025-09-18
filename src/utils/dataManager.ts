@@ -142,7 +142,7 @@ export class DataManager {
 
       if (dateRange) {
         submissions = submissions.filter(submission => {
-          const submittedAt = new Date((submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt);
+          const submittedAt = new Date(submission.metadata.submittedAt);
           return submittedAt >= dateRange.start && submittedAt <= dateRange.end;
         });
       }
@@ -167,7 +167,7 @@ export class DataManager {
     return JSON.stringify(exportData, null, 2);
   }
 
-  static convertToCSV(data: unknown[]): string {
+  static convertToCSV(data: { schemas?: FormSchema[]; submissions?: FormSubmission[] }): string {
     const lines: string[] = [];
 
     // Export schemas as CSV
@@ -207,10 +207,10 @@ export class DataManager {
 
       data.submissions.forEach((submission: FormSubmission) => {
         const row = [
-          submission.id,
-          submission.formId,
-          submission.status,
-          (submission as FormSubmission).metadata?.submittedAt || (submission as FormSubmission).submittedAt,
+          `"${submission.id}"`,
+          `"${submission.formId}"`,
+          `"${submission.status}"`,
+          `"${submission.metadata.submittedAt}"`,
           ...Array.from(allFieldNames).map(fieldName => {
             const value = submission.data[fieldName];
             return `"${String(value || '').replace(/"/g, '""')}"`;

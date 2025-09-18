@@ -20,6 +20,13 @@ export function DataDashboard() {
   const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportOptions, setExportOptions] = useState({
+    includeSchemas: true,
+    includeSubmissions: true,
+    selectedFormIds: [] as string[],
+    dateFrom: '',
+    dateTo: ''
+  });
 
   useEffect(() => {
     loadSubmissions();
@@ -29,9 +36,16 @@ export function DataDashboard() {
   const handleExportData = async (format: 'json' | 'csv' = 'json') => {
     setIsExporting(true);
     try {
+      const dateRange = exportOptions.dateFrom && exportOptions.dateTo ? {
+        start: new Date(exportOptions.dateFrom),
+        end: new Date(exportOptions.dateTo)
+      } : undefined;
+
       const exportData = DataManager.exportData({
-        includeSubmissions: true,
-        includeSchemas: true,
+        includeSubmissions: exportOptions.includeSubmissions,
+        includeSchemas: exportOptions.includeSchemas,
+        formIds: exportOptions.selectedFormIds.length > 0 ? exportOptions.selectedFormIds : undefined,
+        dateRange,
         format
       });
 
@@ -41,7 +55,7 @@ export function DataDashboard() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `form-data-export.${format}`;
+      a.download = `form-data-export-${new Date().toISOString().split('T')[0]}.${format}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -50,7 +64,7 @@ export function DataDashboard() {
       setShowExportModal(false);
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Export failed. Please try again.');
+      window.alert('Export failed. Please try again.');
     } finally {
       setIsExporting(false);
     }
@@ -276,43 +290,119 @@ export function DataDashboard() {
               <p className="text-sm text-gray-500 mt-1">Choose your export format</p>
             </div>
 
-            <div className="p-6">
-              <div className="space-y-4">
-                <button
-                  onClick={() => handleExportData('json')}
-                  disabled={isExporting}
-                  className="w-full text-left p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50"
-                >
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-6 space-y-6">
+              {/* Export Options */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Export Options</h4>
+                <div className="space-y-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeSchemas}
+                      onChange={(e) => setExportOptions(prev => ({ ...prev, includeSchemas: e.target.checked }))}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Include form schemas</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeSubmissions}
+                      onChange={(e) => setExportOptions(prev => ({ ...prev, includeSubmissions: e.target.checked }))}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Include form submissions</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Date Range Filter */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Date Range (Optional)</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">From</label>
+                    <input
+                      type="date"
+                      value={exportOptions.dateFrom}
+                      onChange={(e) => setExportOptions(prev => ({ ...prev, dateFrom: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">To</label>
+                    <input
+                      type="date"
+                      value={exportOptions.dateTo}
+                      onChange={(e) => setExportOptions(prev => ({ ...prev, dateTo: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Selection */}
+              {schemas.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Forms (Optional)</h4>
+                  <div className="max-h-32 overflow-y-auto space-y-2">
+                    {schemas.map(schema => (
+                      <label key={schema.id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={exportOptions.selectedFormIds.includes(schema.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setExportOptions(prev => ({
+                                ...prev,
+                                selectedFormIds: [...prev.selectedFormIds, schema.id]
+                              }));
+                            } else {
+                              setExportOptions(prev => ({
+                                ...prev,
+                                selectedFormIds: prev.selectedFormIds.filter(id => id !== schema.id)
+                              }));
+                            }
+                          }}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 truncate">{schema.title}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Export Format Buttons */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Choose Format</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleExportData('json')}
+                    disabled={isExporting || (!exportOptions.includeSchemas && !exportOptions.includeSubmissions)}
+                    className="p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="text-center">
+                      <svg className="w-6 h-6 text-blue-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
+                      <div className="text-xs font-medium text-gray-900">JSON</div>
                     </div>
-                    <div className="ml-4">
-                      <h4 className="text-sm font-medium text-gray-900">JSON Format</h4>
-                      <p className="text-sm text-gray-500">Complete data with metadata and structure</p>
-                    </div>
-                  </div>
-                </button>
+                  </button>
 
-                <button
-                  onClick={() => handleExportData('csv')}
-                  disabled={isExporting}
-                  className="w-full text-left p-4 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors disabled:opacity-50"
-                >
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <button
+                    onClick={() => handleExportData('csv')}
+                    disabled={isExporting || (!exportOptions.includeSchemas && !exportOptions.includeSubmissions)}
+                    className="p-3 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="text-center">
+                      <svg className="w-6 h-6 text-green-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
+                      <div className="text-xs font-medium text-gray-900">CSV</div>
                     </div>
-                    <div className="ml-4">
-                      <h4 className="text-sm font-medium text-gray-900">CSV Format</h4>
-                      <p className="text-sm text-gray-500">Spreadsheet-friendly tabular data</p>
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
 

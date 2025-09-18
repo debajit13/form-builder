@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { storage } from '../utils/storage'
 import { LoadingSpinner } from '../components/LoadingSpinner'
+import { DataManager } from '../utils/dataManager'
 import type { FormSchema, FormSubmission } from '../types/schema'
 
 type ViewMode = 'forms' | 'submissions' | 'analytics'
@@ -94,6 +95,55 @@ export function DataManagementPage() {
       newParams.delete('formId')
     }
     setSearchParams(newParams)
+  }
+
+  const handleExportSubmissions = (format: 'json' | 'csv' = 'csv') => {
+    if (filteredSubmissions.length === 0) {
+      window.alert('No submissions to export.')
+      return
+    }
+
+    try {
+      let exportData: string
+      let filename: string
+      let mimeType: string
+
+      if (format === 'csv') {
+        exportData = DataManager.convertToCSV({ submissions: filteredSubmissions })
+        filename = selectedForm
+          ? `${selectedForm.title.replace(/[^a-zA-Z0-9]/g, '_')}_submissions_${new Date().toISOString().split('T')[0]}.csv`
+          : `all_submissions_${new Date().toISOString().split('T')[0]}.csv`
+        mimeType = 'text/csv'
+      } else {
+        const exportObject = {
+          submissions: filteredSubmissions,
+          form: selectedForm,
+          exportedAt: new Date().toISOString(),
+          metadata: {
+            totalSubmissions: filteredSubmissions.length,
+            formFilter: selectedForm ? selectedForm.title : 'All forms'
+          }
+        }
+        exportData = JSON.stringify(exportObject, null, 2)
+        filename = selectedForm
+          ? `${selectedForm.title.replace(/[^a-zA-Z0-9]/g, '_')}_submissions_${new Date().toISOString().split('T')[0]}.json`
+          : `all_submissions_${new Date().toISOString().split('T')[0]}.json`
+        mimeType = 'application/json'
+      }
+
+      const blob = new Blob([exportData], { type: mimeType })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Export failed:', error)
+      window.alert('Export failed. Please try again.')
+    }
   }
 
   const filteredSubmissions = selectedFormId
@@ -279,9 +329,27 @@ export function DataManagementPage() {
           {/* Submissions Table */}
           <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Submissions ({filteredSubmissions.length})
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Submissions ({filteredSubmissions.length})
+                </h2>
+                {filteredSubmissions.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleExportSubmissions('csv')}
+                      className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors flex items-center gap-1"
+                    >
+                      📊 Export CSV
+                    </button>
+                    <button
+                      onClick={() => handleExportSubmissions('json')}
+                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
+                    >
+                      📄 Export JSON
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {filteredSubmissions.length === 0 ? (

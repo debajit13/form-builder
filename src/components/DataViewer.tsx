@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import type { FormSubmission } from '../types/schema';
 import { useSubmissionManager } from '../hooks/useSubmissionManager';
 import { useSchemaManager } from '../hooks/useSchemaManager';
+import { DataManager } from '../utils/dataManager';
 
 interface DataViewerProps {
   formId?: string;
@@ -157,6 +158,52 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
     }
   };
 
+  const handleExportSelected = (format: 'json' | 'csv' = 'csv') => {
+    if (selectedSubmissions.size === 0) return;
+
+    const selectedSubmissionData = filteredSubmissions.filter(submission =>
+      selectedSubmissions.has(submission.id)
+    );
+
+    try {
+      const exportData = DataManager.exportData({
+        includeSubmissions: true,
+        includeSchemas: false,
+        format
+      });
+
+      // Extract only selected submissions for export
+      const exportObject = format === 'json' ? JSON.parse(exportData) : null;
+      let finalExportData: string;
+
+      if (format === 'json') {
+        exportObject.submissions = selectedSubmissionData;
+        exportObject.metadata.totalSubmissions = selectedSubmissionData.length;
+        finalExportData = JSON.stringify(exportObject, null, 2);
+      } else {
+        // For CSV, convert selected submissions only
+        finalExportData = DataManager.convertToCSV({ submissions: selectedSubmissionData });
+      }
+
+      const blob = new Blob([finalExportData], {
+        type: format === 'json' ? 'application/json' : 'text/csv'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `selected-submissions-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setSelectedSubmissions(new Set());
+    } catch (error) {
+      console.error('Export failed:', error);
+      window.alert('Export failed. Please try again.');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
@@ -208,11 +255,23 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
             <p className="text-sm text-gray-500">{totalItems} total submissions</p>
           </div>
 
-          {selectedSubmissions.size > 0 && (
+          {selectedSubmissions.size > 0 ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">
                 {selectedSubmissions.size} selected
               </span>
+              <button
+                onClick={() => handleExportSelected('csv')}
+                className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
+              >
+                Export CSV
+              </button>
+              <button
+                onClick={() => handleExportSelected('json')}
+                className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+              >
+                Export JSON
+              </button>
               <button
                 onClick={handleBulkDelete}
                 className="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors"
@@ -220,6 +279,25 @@ export function DataViewer({ formId, onSubmissionSelect }: DataViewerProps) {
                 Delete Selected
               </button>
             </div>
+          ) : filteredSubmissions.length > 0 && (
+            <button
+              onClick={() => {
+                const allSubmissions = filteredSubmissions;
+                const csvData = DataManager.convertToCSV({ submissions: allSubmissions });
+                const blob = new Blob([csvData], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `all-submissions-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }}
+              className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
+            >
+              📊 Export All as CSV
+            </button>
           )}
         </div>
       </div>
